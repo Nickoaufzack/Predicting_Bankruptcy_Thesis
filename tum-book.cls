@@ -13,7 +13,7 @@
 % process options
 \DeclareOption{a4paper}{%
   \PassOptionsToPackage{a4paper}{tum-base-text}
-  \PassOptionsToClass{a4paper,fontsize=13pt}{scrbook}
+  \PassOptionsToClass{a4paper,fontsize=12pt}{scrbook}
 }
 \DeclareOption{a5paper}{%
   \PassOptionsToPackage{a5paper}{tum-base-text}
@@ -21,6 +21,8 @@
 }
 \DeclareOption{twoside}{\PassOptionsToClass{twoside}{scrbook}}
 \DeclareOption{oneside}{\PassOptionsToClass{oneside}{scrbook}}
+\DeclareOption{openany}{\PassOptionsToClass{open=any}{scrbook}}
+\DeclareOption{openright}{\PassOptionsToClass{open=right}{scrbook}}
 \DeclareOption{times}{\PassOptionsToPackage{times}{tum-base}}
 \DeclareOption{german}{%
   \PassOptionsToPackage{german}{tum-base}
@@ -34,14 +36,16 @@
 \ProcessOptions\relax
 
 % load base class
-\LoadClass[pagesize,bibtotoc,idxtotoc,numbers=noenddot]{scrbook}
+% No `pagesize': tum-base-text loads geometry, which sets the PDF page size itself.
+\LoadClass[bibliography=totoc,index=totoc,numbers=noenddot]{scrbook}
 
 % load TUM base packages
 \RequirePackage{tum-base}
 \RequirePackage{tum-base-text}
 
-\newcommand{\thepublisher}{~}
-\newcommand{\publisher}[1]{\renewcommand{\thepublisher}{#1}}
+% Namespaced: biblatex creates a `publisher' counter and would collide with \thepublisher.
+\newcommand{\thetumpublisher}{~}
+\newcommand{\tumpublisher}[1]{\renewcommand{\thetumpublisher}{#1}}
 \newcommand{\thetitledescription}{~}
 \newcommand{\titledescription}[1]{\renewcommand{\thetitledescription}{#1}}
 \newcommand{\thefineprint}{~}
@@ -82,7 +86,7 @@
     { \flushleft\Large\@subtitle\par }
     \vspace{12pt}
     { \flushleft\Large\textcolor{TUMBlau}{\textbf{\@author}}\par
-      \thepublisher\par }
+      \thetumpublisher\par }
     { \flushleft\large\thetitledescription\par }
     { \flushleft\normalsize\thefineprint\par }
 
@@ -143,7 +147,7 @@
 \newpage
   \pagestyle{empty}
   {
-    \fontfamily{times}\selectfont
+    \fontfamily{ptm}\selectfont
     \noindent
     { \flushleft\huge\bfseries\center Declaration of Academic Integrity \par}
     \vspace{10mm}
@@ -169,7 +173,7 @@ This paper was not previously presented to another examination board and has not
   \phantom{u}
   \phantom{1}\vspace{6cm}
   \begin{center}
-    \fontfamily{times}\selectfont
+    \fontfamily{ptm}\selectfont
     #1
   \end{center}
   \newpage
@@ -181,20 +185,20 @@ This paper was not previously presented to another examination board and has not
   \cleardoublepage
   \pagestyle{titlepage}
   \begin{otherlanguage}{ngerman}
-    { \flushleft\fontfamily{times}\selectfont\large\thedepartment\par
+    { \flushleft\fontfamily{ptm}\selectfont\large\thedepartment\par
       \thegroup\par
     }
     \vspace{12pt}
-    { \flushleft\fontfamily{times}\selectfont\huge\bfseries\@title\par }
+    { \flushleft\fontfamily{ptm}\selectfont\huge\bfseries\@title\par }
     { \flushleft\flushleft\fontfamily{times}\Large
       \textcolor{TUMBlau}{\textbf{\@author}}\par}
-    { \flushleft\fontfamily{times}\selectfont\normalsize
+    { \flushleft\fontfamily{ptm}\selectfont\normalsize
       Vollständiger Abdruck der von der \thedepartment{} der
       \theuniversity{} zur Erlangung des akademischen Grades eines\\
       \textbf{Doktor-Ingenieurs (Dr.-Ing.)}\\
       genehmigten Dissertation.\par
     }
-    { \flushleft\fontfamily{times}\selectfont\normalsize
+    { \flushleft\fontfamily{ptm}\selectfont\normalsize
       Vorsitzende(r): #3\par
       Prüfer der Dissertation:
       \begin{enumerate}[nolistsep]
@@ -203,7 +207,7 @@ This paper was not previously presented to another examination board and has not
       \end{enumerate}
     }
     \vspace{12pt}
-    { \flushleft\fontfamily{times}\selectfont\normalsize
+    { \flushleft\fontfamily{ptm}\selectfont\normalsize
       Die Dissertation wurde am #1 bei der \theuniversity{} eingereicht und
       durch die \thedepartment{} am #2 angenommen.\par}
   \end{otherlanguage}
@@ -225,18 +229,11 @@ This paper was not previously presented to another examination board and has not
 \usepackage{chngcntr}
 \counterwithout{footnote}{chapter}
 \usepackage[doublespacing]{setspace}
-\makeatletter
-\makeatother
 \usepackage{enumitem}
 \setlist{nosep}
 \renewcommand*{\chapterheadstartvskip}{\vspace*{0cm}}
 \renewcommand*{\chapterheadendvskip}{\vspace{0cm}}
 \usepackage{titlesec}
-\titlespacing{\section}{0pt}{*2}{*1}
-\titlespacing{\subsection}{0pt}{*2}{*1}
-\titleformat*{\section}{\LARGE}
-\titleformat*{\subsection}{\Large}
-\titleformat*{\subsubsection}{\large}
 
 %Distance between paragraphs
 \setlength{\parskip}{15pt}
@@ -245,21 +242,20 @@ This paper was not previously presented to another examination board and has not
 \usepackage{hyperref}
 \usepackage{csquotes}
 
-\setcounter{secnumdepth}{-1}
-
-
+% Numbering down to subsection. Levels beyond secnumdepth get no \refstepcounter,
+% which would leave hyperref without an anchor and send every ToC link to page 1.
+\setcounter{secnumdepth}{2}
 
 \SetBlockThreshold{0}
 
 \parindent=1.27cm
 \newcommand{\periodafter}[1]{#1.~~}
-\usepackage{titlesec}
 \titleclass{\chapter}{straight}
-\titleformat{\chapter}{\normalfont\normalsize\bfseries\centering}{}{1em}{}
+\titleformat{\chapter}{\normalfont\normalsize\bfseries\centering}{\thechapter}{1em}{}
 \titlespacing{\chapter}{0pt}{12pt plus 0pt minus 12pt}{0pt}
-\titleformat{\section}{\normalfont\normalsize\bfseries}{}{1em}{}
+\titleformat{\section}{\normalfont\normalsize\bfseries}{\thesection}{1em}{}
 \titlespacing{\section}{0pt}{12pt plus 0pt minus 12pt}{-12pt}
-\titleformat{\subsection}{\normalfont\normalsize\bfseries\itshape}{}{1em}{}
+\titleformat{\subsection}{\normalfont\normalsize\bfseries\itshape}{\thesubsection}{1em}{}
 \titlespacing{\subsection}{0pt}{12pt plus 0pt minus 12pt}{-12pt}
 \titleformat{\subsubsection}[runin]{\normalfont\normalsize\bfseries}{}{1em}{\periodafter}
 \titlespacing{\subsubsection}{1.27cm}{0pt}{0pt}

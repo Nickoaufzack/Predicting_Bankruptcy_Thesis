@@ -1,8 +1,171 @@
-@Book{oxfordai,
-    publisher = {Oxford University Press},
-    author = {{Oxford University Press}},
-    editor = {James Murray},
-    title = {{Oxford English Dictionary}},
-    year = {2018},
-    month = {12},
+% =====================================================================
+% literature.bib  --  Bankruptcy Prediction Thesis (Niklas Demmrich)
+% Style: biblatex, style=apa, backend=biber, pagetracker=true (see tum-book.cls).
+% Cite in text with page numbers as the chair requires, e.g.:
+%   \textcite[99]{wangliu2021}  ->  Wang and Liu (2021, p. 99)
+%   \parencite[p.~99]{wangliu2021}
+% ---------------------------------------------------------------------
+% Entries are drawn from the actual source PDFs in the project knowledge
+% base; DOIs marked (from PDF) were read directly off the paper.
+% Fields tagged "% VERIFY" are my best reconstruction -- please confirm
+% volume/issue/pages/article-id against the paper before submission.
+% =====================================================================
+
+
+% ---- Base paper: the methodology this thesis extends ----------------
+@article{wangliu2021,
+  author       = {Wang, Haoming and Liu, Xiangdong},
+  title        = {Undersampling bankruptcy prediction: {Taiwan} bankruptcy data},
+  journaltitle = {PLOS ONE},
+  year         = {2021},
+  volume       = {16},        % VERIFY
+  number       = {7},         % VERIFY
+  pages        = {e0254030},  % VERIFY article id
+  doi          = {10.1371/journal.pone.0254030}, % VERIFY
+}
+
+% ---- Feature categories / "50:50 balancing" to argue against --------
+@article{liang2016,
+  author       = {Liang, Deron and Lu, Chia-Chi and Tsai, Chih-Fong and Shih, Guan-An},
+  title        = {Financial ratios and corporate governance indicators in bankruptcy prediction: A comprehensive study},
+  journaltitle = {European Journal of Operational Research},
+  year         = {2016},
+  volume       = {252},
+  number       = {2},
+  pages        = {561--572},
+  doi          = {10.1016/j.ejor.2016.01.012}, % VERIFY
+}
+
+% ---- Imbalance in bankruptcy prediction -----------------------------
+@article{veganzones2018,
+  author       = {Veganzones, David and S{\'e}verin, Eric},
+  title        = {An investigation of bankruptcy prediction in imbalanced datasets},
+  journaltitle = {Decision Support Systems},
+  year         = {2018},
+  volume       = {112},       % VERIFY
+  pages        = {111--124},  % VERIFY
+  doi          = {10.1016/j.dss.2018.06.011}, % from PDF
+}
+
+% ---- ClusterCentroids + RF feature-importance example ---------------
+@article{ansahnarh2024,
+  author       = {Ansah-Narh, T. and Nortey, E. N. N. and Proven-Adzri, E. and Opoku-Sarkodie, R.},
+  title        = {Enhancing corporate bankruptcy prediction via a hybrid genetic algorithm and domain adaptation learning architecture},
+  journaltitle = {Expert Systems with Applications},
+  year         = {2024},
+  volume       = {258},       % VERIFY
+  pages        = {125133},    % article id
+  doi          = {10.1016/j.eswa.2024.125133}, % from PDF
+}
+
+% ---- Ensemble models under balanced/imbalanced data -----------------
+@article{amirshahi2024,
+  author       = {Amirshahi, Bahareh and Lahmiri, Salim},
+  title        = {Bankruptcy prediction using optimal ensemble models under balanced and imbalanced data},
+  journaltitle = {Expert Systems},
+  year         = {2024},      % VERIFY
+  volume       = {41},        % VERIFY
+  pages        = {e13599},    % article id
+  doi          = {10.1111/exsy.13599}, % from PDF
+}
+
+% ---- Taiwanese dataset, ML + factor analysis ------------------------
+@article{ko2024,
+  author       = {Ko, Juyong and Lee, Jai Woo},
+  title        = {Applications of Big Data and {AI}-Driven Technologies in High-Dimensional Data Analysis: {Taiwanese} Bankruptcy Prediction Using Machine Learning Models with Factor Analysis},
+  journaltitle = {Journal of the Korean Society for Industrial and Applied Mathematics},
+  year         = {2024},
+  volume       = {28},
+  number       = {4},
+  pages        = {286--302},
+  doi          = {10.12941/jksiam.2024.28.286}, % from PDF
+}
+
+% ---- ML + data balancing methods ------------------------------------
+@article{liashenko2023,
+  author       = {Liashenko, Olena and Kravets, Tetyana and Kostovetskyi, Yevhenii},
+  title        = {Machine learning and data balancing methods for bankruptcy prediction},
+  journaltitle = {Ekonomika},
+  year         = {2023},
+  volume       = {102},
+  number       = {2},
+  pages        = {28--46},
+  doi          = {10.15388/Ekon.2023.102.2.2}, % from PDF
+}
+
+% ---- SMOTE vs. undersampling benchmark; also uses SHAP --------------
+@article{sinap2025,
+  author       = {Sinap, Vahid},
+  title        = {Bankruptcy Prediction with {Optuna}-Enhanced Ensemble Machine Learning Methods: A Comparison of Oversampling and Undersampling Techniques},
+  journaltitle = {Dicle University Journal of Engineering (DUJE)},
+  year         = {2025},
+  volume       = {16},
+  number       = {1},
+  pages        = {97--113},
+}
+
+% ---- "Black box" SMOTE benchmark to argue against -------------------
+@report{pham2025,
+  author       = {Pham, Hung and Chu, Tuan and Le, Tuan M. and Tran, Hieu M. and Tran, Huong T. K. and Yen, Khanh N. and Dao, Son V. T.},
+  title        = {Comprehensive Evaluation of Bankruptcy Prediction in {Taiwanese} Firms Using Multiple Machine Learning Models},
+  institution  = {RMIT University},
+  type         = {Research report},
+  year         = {2025},
+  url          = {https://hdl.handle.net/10779/rmit.28341914.v1},
+  urldate      = {2026-07-10},
+}
+
+% ---- High-accuracy multi-granularity approach -----------------------
+@inproceedings{suresh2025,
+  author       = {Suresh, A. and Mohana Sundaram, K. D. and Durairaj, K. and Ravi Babu, B.},
+  title        = {Advancing Corporate Finance: A Multi-Granularity Approach to Bankruptcy Prediction},
+  booktitle    = {Proceedings of the IEEE International Conference on Advanced Communication Technology (ICACT)},
+  year         = {2025},
+  doi          = {10.1109/ICACT67549.2025.11351493}, % from PDF
+  note         = {VERIFY full author list and venue details},
+}
+
+% ---- "Pearson too simple" critique (Literature Review only) ---------
+@thesis{chaudhary2023,
+  author       = {Chaudhary, Saumya},
+  title        = {Using Machine Learning to Identify Factors Contributing to Firms' Bankruptcy: A Case Study of the {Taiwanese} Market},
+  type         = {MSc research project (FinTech)},
+  institution  = {National College of Ireland},
+  year         = {2023},
+}
+
+% =====================================================================
+% Method references (not in the PDF folder -- standard, widely cited)
+% =====================================================================
+
+% ---- SHAP: Shapley-value / additive attribution --------------------
+@inproceedings{lundberg2017,
+  author       = {Lundberg, Scott M. and Lee, Su-In},
+  title        = {A Unified Approach to Interpreting Model Predictions},
+  booktitle    = {Advances in Neural Information Processing Systems 30 (NeurIPS 2017)},
+  year         = {2017},
+  pages        = {4765--4774},
+}
+
+% ---- Gini-bias in random-forest importance -------------------------
+@article{strobl2007,
+  author       = {Strobl, Carolin and Boulesteix, Anne-Laure and Zeileis, Achim and Hothorn, Torsten},
+  title        = {Bias in random forest variable importance measures: Illustrations, sources and a solution},
+  journaltitle = {BMC Bioinformatics},
+  year         = {2007},
+  volume       = {8},
+  pages        = {25},
+  doi          = {10.1186/1471-2105-8-25},
+}
+
+% ---- RF hyperparameter tuning justification ------------------------
+@article{probst2019,
+  author       = {Probst, Philipp and Wright, Marvin N. and Boulesteix, Anne-Laure},
+  title        = {Hyperparameters and tuning strategies for random forests},
+  journaltitle = {WIREs Data Mining and Knowledge Discovery},
+  year         = {2019},
+  volume       = {9},
+  number       = {3},
+  pages        = {e1301},
+  doi          = {10.1002/widm.1301},
 }
