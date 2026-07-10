@@ -1,7 +1,53 @@
 \chapter{Dataset}
 \label{ch:dataset}
 
-% EQUATOR: ~0.5 pages. Brief description of the Taiwanese Bankruptcy Dataset
-%   (6,819 firms, 95 features, ~3.23% bankrupt) + first critical questions (raised, left open).
-% Note the two categorical flags: Liability-Assets Flag, Net Income Flag (0/1) -- not continuous.
+The empirical analysis uses the Taiwanese Bankruptcy Dataset, a well-established
+benchmark compiled from the Taiwan Economic Journal and covering listed firms
+over the period 1999--2009. It is the same dataset studied by
+\textcite{wangliu2021}, which makes the two works directly comparable. The data
+comprise $6{,}819$ firm-year observations described by $95$ financial features
+and a single binary target that records whether a firm was declared bankrupt.
+Table~\ref{tab:dataset} summarises its composition.
 
+\begin{table}[htbp]
+  \centering
+  \caption{Composition of the Taiwanese Bankruptcy Dataset.}
+  \label{tab:dataset}
+  \begin{tabular}{lrr}
+    \toprule
+    \textbf{Class} & \textbf{Firms} & \textbf{Share} \\
+    \midrule
+    Healthy (0)   & $6{,}599$ & $96.77\%$ \\
+    Bankrupt (1)  & $220$     & $3.23\%$  \\
+    \midrule
+    Total         & $6{,}819$ & $100.00\%$ \\
+    \bottomrule
+  \end{tabular}
+  \floatfoot{Binary target; $95$ financial features per observation.}
+\end{table}
+
+The $95$ features span the standard categories of firm-level financial analysis:
+profitability ratios such as return on assets, leverage and solvency ratios such
+as the debt ratio, liquidity ratios, turnover and efficiency ratios, and
+per-share value measures. The overwhelming majority are continuous ratios. Two
+features are exceptions and are treated as categorical throughout: the
+\emph{Liability-Assets Flag} and the \emph{Net Income Flag}, each taking the
+values $0$ or $1$. Because they are indicators rather than magnitudes, they are
+excluded from the continuous-feature normalisation described in
+Section~\ref{sec:preprocessing}.
+
+Two properties of the data shape the entire analysis. The first is the severe
+class imbalance already visible in Table~\ref{tab:dataset}: with bankrupt firms
+accounting for only $3.23\%$ of observations, a naive classifier can achieve high
+accuracy while being predictively worthless, which motivates both the
+undersampling design of Section~\ref{sec:undersampling} and the choice of the
+$F_2$-score in Section~\ref{sec:metrics}. The second is the high dimensionality
+combined with pronounced multicollinearity among the $95$ ratios: many features
+are algebraic transformations or close relatives of one another, so that
+distinct ratios carry overlapping information. This redundancy is largely benign
+for predictive accuracy but has direct consequences for feature importance, as
+Chapters~\ref{ch:featureimportance} and \ref{ch:results} will show. A number of
+further questions --- the absence of macroeconomic controls, the sector
+composition of the sample, and the precise legal definition of the bankruptcy
+event --- are raised here but left open, since they bear on interpretation
+rather than on the predictive exercise itself.

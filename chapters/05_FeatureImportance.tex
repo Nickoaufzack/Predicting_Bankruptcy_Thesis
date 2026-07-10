@@ -1,36 +1,128 @@
 \chapter{Feature Importance}
 \label{ch:featureimportance}
 
-% EQUATOR: ~2.5-3 pages (method here + FI results in ch. Results ~= 4 pages total).
-%   This is the thesis's CENTRAL CONTRIBUTION. Explains the three methods (NOT the results).
-% GUIDE/Gabriel (Meeting 6): written for a Bachelor reader who does not know SHAP.
-% CAUSAL CAUTION up front and audible throughout: FI is ASSOCIATIVE, not causal.
+Having established how the models are trained and evaluated, this chapter turns
+to the interpretive question at the heart of the thesis: which financial features
+do the fitted models rely on? Three importance methods are applied to each of the
+three models --- native importance, permutation importance, and SHAP. They are
+introduced here as methods; their numerical results, and the divergence between
+them, are reported in Chapter~\ref{ch:results}.
 
-\section{Associative, Not Causal (Scope)}
-\label{sec:fi-caution}
-% Without hypothesis tests / causal identification, all FI statements describe what the
-%   model relies on for prediction -- not economic mechanisms that cause bankruptcy.
+One caveat frames everything that follows and is repeated deliberately. Feature
+importance is a statement about the model, not about the economy. It measures
+what a trained classifier uses to separate bankrupt from healthy firms; it does
+not identify the causal mechanisms that drive firms into insolvency. Without a
+design for causal identification, every ranking in this and the following chapter
+is to be read as \emph{associative} --- informative about predictive reliance,
+silent about cause. This distinction is not a rhetorical hedge but a genuine
+limit of the exercise, and it becomes especially important where the three
+methods disagree.
 
 \section{Native Importance}
 \label{sec:fi-native}
-% LR signed coefficients (log-odds, direction-bearing); RF/GB Gini impurity importance
-%   (unsigned, biased toward continuous/high-cardinality features -- Strobl et al. 2007).
+
+Native importance reads the importance directly off the fitted model, and it
+therefore means something different for each model family. For the logistic
+regression, the natural measure is the vector of estimated coefficients from
+Equation~\eqref{eq:logit}. Because the features are normalised to a common scale,
+the magnitude of a coefficient reflects the strength of its influence on the
+predicted log-odds, and its sign reflects direction: a positive coefficient
+pushes a firm towards the bankruptcy class, a negative one away from it. Signed,
+directional importance is a distinctive strength of the linear model.
+
+For the two tree ensembles, native importance is the Gini impurity importance:
+each feature is credited with the total reduction in node impurity it produces,
+summed over all splits and averaged over all trees. This measure is always
+non-negative and hence \emph{unsigned}; it records that a feature matters, not in
+which direction. It also carries a well-documented bias. \textcite{strobl2007}
+show that impurity importance systematically favours continuous and
+high-cardinality features, because such features offer more candidate split
+points and can therefore reduce impurity by chance more often than coarse or
+binary features. On a dataset of $95$ continuous ratios of differing granularity,
+this bias is a live concern, and it is one reason the analysis does not stop at
+native importance.
 
 \section{Permutation Importance}
 \label{sec:fi-permutation}
-% Model-agnostic, F2 scorer, 10 repeats. Performance-drop when a feature is shuffled.
-%   Weakness under correlation: with 95 correlated features -> tiny values (correlation masking).
+
+Permutation importance takes a model-agnostic, performance-based view. The values
+of a single feature are randomly shuffled across observations, breaking its
+association with the target while leaving all other features intact, and the
+resulting drop in the $F_2$-score is recorded. A feature the model genuinely
+relies on will, when scrambled, cause a large deterioration; an irrelevant
+feature will cause none. To average out the randomness of the shuffle, the
+procedure is repeated ten times and the mean drop, together with its standard
+deviation, is reported. Because it is defined purely in terms of the loss, the
+method applies identically to all three models and thus provides a common
+comparison anchor.
+
+Its principal weakness is also well understood and is directly relevant here.
+When features are strongly correlated, permuting one of them barely hurts the
+model, because a correlated partner still carries almost the same information and
+substitutes for the scrambled feature. On the highly collinear Taiwanese ratios,
+this ``correlation masking'' can drive the measured importances towards
+implausibly small values, so that even features the model demonstrably uses
+appear unimportant. This behaviour is not a defect of the implementation but an
+intrinsic property of permutation under dependence, and it motivates a third
+method whose theoretical guarantees are stronger.
 
 \section{SHAP}
 \label{sec:fi-shap}
-% Weight here. Start from the full Shapley value (coalitions/factorials -- Gabriel wants the
-%   COMPLEX formula, not just the simplified one). Show why exact computation is infeasible
-%   (2^94). Then LinearExplainer (LR) and TreeExplainer (RF/GB) as exact heuristics.
-%   SHAP = the only method giving SIGNED importance for ALL three models -> common axis.
-%   Reference: Lundberg & Lee.
 
-\section{Permutation vs. SHAP: Pro / Contra}
-\label{sec:fi-procontra}
-% Gabriel directive (Meeting 6): the red thread. First GENERAL textbook advantages/disadvantages,
-%   then SPECIFIC to this correlated dataset. LIME non-use: optional short content justification.
+SHAP (SHapley Additive exPlanations) grounds feature importance in cooperative
+game theory and, unlike the previous two methods, comes with axiomatic
+guarantees \parencite{lundberg2017}. Its starting point is the idea of an
+\emph{explanation model}: a simple, interpretable surrogate that approximates the
+complex model locally. \textcite{lundberg2017} define the class of additive
+feature-attribution methods as those whose explanation model is a linear function
+of binary indicators,
+\begin{equation}
+  g(z') = \phi_0 + \sum_{i=1}^{M} \phi_i z_i',
+  \label{eq:shap-additive}
+\end{equation}
+where $z' \in \{0,1\}^M$ indicates the presence or absence of each of the $M$
+simplified features, $\phi_0$ is the model output with no feature information,
+and each $\phi_i$ is the contribution attributed to feature $i$. The prediction
+is thus decomposed additively into a base value plus one term per feature.
 
+The question is how to assign the attributions $\phi_i$. SHAP answers it with the
+Shapley value, the unique allocation from cooperative game theory that
+distributes the ``payout'' of a prediction fairly among the features. Treating
+the features as players in a game whose payoff is the model output, the
+contribution of feature $i$ is its marginal effect averaged over every coalition
+of the remaining features. Writing $F$ for the full set of features, a model
+$f_{S \cup \{i\}}$ trained with feature $i$ present is compared against a model
+$f_S$ trained without it, over all subsets $S \subseteq F \setminus \{i\}$:
+\begin{equation}
+  \phi_i = \sum_{S \subseteq F \setminus \{i\}}
+  \frac{|S|!\,\bigl(|F| - |S| - 1\bigr)!}{|F|!}
+  \left[\, f_{S \cup \{i\}}\!\left(x_{S \cup \{i\}}\right) - f_S\!\left(x_S\right) \right].
+  \label{eq:shap-shapley}
+\end{equation}
+The combinatorial weight in Equation~\eqref{eq:shap-shapley} counts the
+orderings in which feature $i$ joins coalition $S$, so that $\phi_i$ is a weighted
+average of the feature's marginal contribution across all possible coalitions.
+This is what gives SHAP its fairness properties, but it is also what makes the
+exact computation intractable: the sum ranges over all subsets of the remaining
+features, of which there are $2^{|F|-1}$. With $95$ features this amounts to
+$2^{94}$ coalitions per feature --- a number far beyond any feasible computation.
+
+SHAP is therefore made practical by exploiting model structure to evaluate
+Equation~\eqref{eq:shap-shapley} exactly without enumerating the coalitions. For
+the logistic regression, a linear explainer computes the Shapley values in closed
+form from the coefficients and the feature distribution. For the two tree
+ensembles, a tree explainer traverses the trees to obtain the exact Shapley
+values in polynomial rather than exponential time. In both cases the values are
+computed for the bankruptcy class over all firms, and a feature's overall
+importance is summarised by the mean absolute SHAP value across firms.
+
+Two properties make SHAP the interpretive centre of gravity for this thesis.
+First, it returns \emph{signed} attributions for \emph{all three} models: the
+logistic coefficients are signed but only linear, and the impurity importance is
+unsigned, whereas SHAP places every model on the same signed, additive axis and
+so makes their rankings directly comparable. Second, because it accounts for
+feature coalitions rather than perturbing features one at a time, it does not
+collapse under the correlation that so weakens permutation importance. Where the
+two performance-based views disagree, as they will in Chapter~\ref{ch:results},
+SHAP provides the more trustworthy reading, while permutation importance remains
+valuable precisely because its collapse diagnoses the collinearity of the data.

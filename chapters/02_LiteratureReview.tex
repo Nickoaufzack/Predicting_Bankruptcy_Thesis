@@ -1,11 +1,89 @@
 \chapter{Literature Review}
 \label{ch:literature}
 
-% EQUATOR: ~1.5 pages. Situates the work; carves out the interpretability research gap.
-% GUIDE (Farbmacher): present relevant empirical studies concisely IN OWN WORDS and
-%   discuss critically -> key question / data / methods / results / plausibility of assumptions.
-% GUIDE: assess JOURNAL QUALITY of cited sources (e.g. Tinbergen / ABDC list) -- REQUIRED.
-% Storyline anchors: Wang & Liu (2021) as the base to extend; Pham/Suresh/Sinap (2025)
-%   as the SMOTE "black box" benchmark to argue against; Liang et al. (2016) "50:50" to
-%   argue against; Chaudhary (Pearson "too simple") belongs HERE, not in the FI chapter.
+The quantitative prediction of corporate bankruptcy has evolved through three
+overlapping phases: classical statistical models, the adoption of machine
+learning, and, most recently, a growing concern with class imbalance and model
+interpretability. This chapter reviews the strands most relevant to the present
+work and, in doing so, isolates the gap the thesis addresses. Following the
+guidance of the chair, the discussion privileges peer-reviewed contributions in
+established outlets and treats the more recent, method-heavy conference
+literature with corresponding caution regarding the reliability of its
+reported gains.
 
+\section{From Statistical Models to Machine Learning}
+\label{sec:lit-ml}
+
+Early bankruptcy prediction relied on discriminant analysis and, later, on logit
+and probit models estimated over a handful of financial ratios. These models are
+transparent and their coefficients carry an economic sign, but they impose
+strong functional-form assumptions and struggle with the non-linear
+interactions that characterise firm-level data. The comprehensive study of
+\textcite{liang2016} is representative of the transition to machine learning: it
+combines financial ratios with corporate-governance indicators across a large
+Taiwanese sample and shows that ensemble classifiers systematically outperform
+single linear models. Their work also established much of the feature-category
+groundwork on which subsequent studies, including this one, implicitly rely. At
+the same time, \textcite{liang2016} adopt a forced balancing of the two classes,
+a design choice that later work has questioned and that the present thesis
+deliberately avoids.
+
+\section{Class Imbalance and Sampling Strategies}
+\label{sec:lit-imbalance}
+
+Because bankruptcies are rare, the treatment of class imbalance has become a
+defining methodological question. \textcite{veganzones2018} investigate the
+point at which imbalance begins to degrade classifier performance and confirm
+that standard learners deteriorate sharply as the minority share falls, making
+some form of rebalancing necessary. Two broad families of remedies exist.
+Oversampling methods, of which SMOTE is the archetype, synthesise additional
+minority observations; undersampling methods instead reduce the majority class
+until a workable ratio is reached. The most directly relevant contribution is
+\textcite{wangliu2021}, who study undersampling on precisely the Taiwanese
+dataset used here. Using a cluster-based undersampling technique together with
+repeated stratified cross-validation and the $F_2$-score, they report a best
+configuration of edited nearest neighbours combined with a naive-Bayes
+classifier, reaching $F_2 = 0.423$. Their framework --- the sampling philosophy,
+the leakage-aware validation, and the metric --- forms the methodological base
+that this thesis extends.
+
+A parallel and considerably larger body of recent work reports far higher
+performance by combining synthetic oversampling with flexible learners.
+\textcite{pham2025} evaluate multiple models on Taiwanese firms and reach
+accuracies near $98.6\%$ using SMOTE together with an artificial neural network;
+\textcite{suresh2025} and \textcite{sinap2025} report comparable figures with
+related oversampling pipelines, the latter also employing SHAP for
+interpretation. \textcite{liashenko2023} and \textcite{amirshahi2024} similarly
+survey balancing methods and ensemble models under both balanced and imbalanced
+regimes. These results are impressive at face value, but they share a common
+vulnerability: a substantial fraction of the minority class on which the models
+are trained --- and sometimes evaluated --- consists of firms that never
+existed. Headline accuracy is, in addition, a misleading summary statistic under
+a $96.8/3.2$ split. The present thesis treats this literature as a benchmark to
+argue against rather than to emulate, prioritising the integrity of the training
+data over marginal gains in reported performance.
+
+\section{Feature Selection versus Feature Importance}
+\label{sec:lit-fi}
+
+A final strand concerns which features drive the predictions. Several studies
+approach this through upfront feature \emph{selection}. \textcite{chaudhary2023},
+for instance, uses Pearson correlation to screen features on the Taiwanese
+market before fitting a model. Such filters are simple and intuitive, but they
+capture only linear association and, more importantly, answer a different
+question from the one posed here: they rank features \emph{before} and
+independently of the fitted model, whereas this thesis asks which features the
+\emph{trained} model actually relies upon. Post-hoc importance methods have
+themselves been applied in the bankruptcy context ---
+\textcite{ansahnarh2024} report random-forest importances alongside a
+cluster-centroid undersampling step, and \textcite{ko2024} combine factor
+analysis with several learners on the same Taiwanese data --- yet these studies
+typically report a single importance measure without examining whether
+alternative measures would agree. This is precisely the gap the thesis targets:
+rather than adopting one importance method, it compares native importance,
+permutation importance, and SHAP, and makes the disagreement between them the
+object of study. The methodological foundations for that comparison ---
+the impurity bias of tree-based importances documented by \textcite{strobl2007},
+the tuning behaviour of random forests analysed by \textcite{probst2019}, and
+the unified Shapley framework of \textcite{lundberg2017} --- are introduced where
+they are used, in Chapters~\ref{ch:methodology} and \ref{ch:featureimportance}.

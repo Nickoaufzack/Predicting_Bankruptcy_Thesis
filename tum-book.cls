@@ -109,7 +109,7 @@
   \fancyfoot{}
 
   % page numbers
-  \fancyhead[R]{\thepage}
+  \fancyfoot[C]{\thepage}
   \renewcommand{\headrulewidth}{0pt}
   \renewcommand{\footrulewidth}{0pt}
 }

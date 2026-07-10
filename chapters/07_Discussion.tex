@@ -1,8 +1,78 @@
 \chapter{Discussion}
 \label{ch:discussion}
 
-% EQUATOR: ~1.5 pages. Interpretive core. The two legitimate "avenues" for a surprising result:
-%   (1) method artifact (Gini bias) vs. (2) real economic result -- discussed honestly.
-% Economic reading always under the association caveat. Dataset limitations revisited.
-% GUIDE: critically discuss plausibility of assumptions.
+The results invite interpretation on two levels: what the divergence between the
+importance methods tells us about the methods and the data, and what the rankings
+tell us --- cautiously --- about bankruptcy itself. This chapter takes each in
+turn and then revisits the limitations that bound both readings.
 
+\section{Reading the Divergence}
+\label{sec:disc-divergence}
+
+The most robust finding of the thesis is that the three importance methods
+disagree in a structured, explicable way, and that the disagreement is
+diagnostic rather than merely inconvenient. The elevation of \emph{Persistent
+EPS} to first place by the native Gini importance of both ensembles is best read
+as a method artefact: it is the impurity bias of \textcite{strobl2007} operating
+exactly as theory predicts on a fine-grained continuous feature. That SHAP demotes
+this feature and promotes \emph{Borrowing dependency} for gradient boosting is
+correspondingly reassuring, because it is the method with the stronger
+theoretical guarantees that yields the more economically coherent ordering. The
+lesson generalises beyond this dataset: reporting a single native importance
+ranking, as much of the applied literature does, risks mistaking a property of
+the estimator for a property of the world.
+
+The collapse of permutation importance on the ensembles admits a symmetric
+reading. Taken at face value its near-zero values would suggest that the model
+relies on almost nothing, which cannot be reconciled with the model's evident
+predictive success. The resolution is correlation masking: with $95$ collinear
+ratios, no single feature is indispensable because a correlated substitute
+always remains. This makes permutation importance a poor ranking device on this
+data but an excellent \emph{diagnostic} of its redundancy. Read together, then,
+the two performance-based methods are complementary --- SHAP for the ranking,
+permutation for the warning about collinearity --- and it is the comparison, not
+any single method, that delivers the insight. This is the sense in which the
+thesis widens rather than opens the black box: it does not claim a single correct
+importance list but shows where each method can and cannot be trusted.
+
+\section{An Economic Reading, Under Caveat}
+\label{sec:disc-economic}
+
+If the SHAP rankings are read economically --- and only associatively --- they
+are broadly sensible. Leverage and debt-servicing capacity dominate: the debt
+ratio for the logistic regression, and borrowing dependency, the degree of
+financial leverage, and interest-coverage measures for gradient boosting. That
+firms carrying more debt relative to their capacity to service it are more likely
+to fail is consistent with basic corporate-finance intuition, and it is
+encouraging that a pipeline trained purely for prediction recovers this structure
+without being told to. The appearance of profitability and cash-position measures
+alongside leverage rounds out a coherent, if unsurprising, financial picture.
+The emphasis must nonetheless remain on \emph{association}: these features are
+what the models lean on to separate the classes, not established causes of
+insolvency, and the analysis contains no design capable of supporting the
+stronger claim.
+
+\section{Comparison with Wang and Liu and Limitations}
+\label{sec:disc-limits}
+
+Against the reference benchmark, the results are competitive but must be framed
+honestly. The best configuration here, gradient boosting with cluster-centroid
+undersampling at $F_2 = 0.550$, exceeds the best figure reported by
+\textcite{wangliu2021}, whose edited-nearest-neighbours and naive-Bayes
+combination reached $F_2 = 0.423$. This is not a claim to have beaten them under
+identical conditions: the two studies use related but distinct undersampling
+algorithms, and the pairing of tree ensembles with cluster-centroid
+undersampling is simply a combination they did not explore. The contribution is
+therefore twofold --- a competitive clean-pipeline result, and the
+interpretability layer that their work lacked entirely.
+
+Several limitations temper the conclusions. The associative nature of the
+importance analysis has been stressed repeatedly and is the most important of
+them. Beyond it, the dataset offers no macroeconomic controls and covers a single
+market and period, so the transferability of both the performance and the
+rankings to other settings is untested. Undersampling, while protecting the
+integrity of the training data, discards the majority of healthy firms and so
+sacrifices information that a larger sample might exploit. And the sampling ratio
+was fixed rather than tuned, for comparability; a fuller study would treat it as
+a design parameter. None of these qualifications undermines the central result,
+but each marks a boundary of what the present analysis can claim.

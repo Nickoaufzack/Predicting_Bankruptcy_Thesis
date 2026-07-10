@@ -1,6 +1,26 @@
 \chapter*{Abstract}
 \noindent
-% EQUATOR: ~0.25-0.5 pages. Summarizes the whole thesis: research question + short answer.
-% Write LAST, once the chapters are settled.
+Corporate bankruptcy prediction is complicated by severe class imbalance, and
+much of the recent literature addresses this by synthesising minority
+observations, reporting accuracies near $99\%$ on data that is partly fabricated.
+This thesis takes the opposite approach: it trains exclusively on real
+historical firms, restoring balance through cluster-centroid undersampling and
+evaluating models by the recall-oriented $F_2$-score. On the Taiwanese
+Bankruptcy Dataset ($6{,}819$ firms, $95$ features, $3.23\%$ bankrupt), three
+models of increasing complexity are compared. Gradient boosting attains the best
+cross-validated performance ($F_2 = 0.550$), ahead of a random forest ($0.546$)
+and a logistic-regression baseline ($0.482$), and competitive with the
+undersampling benchmark of Wang and Liu (2021) while introducing no synthetic
+data. The central contribution is an interpretability layer that their work
+lacked: comparing native, permutation, and SHAP importance across all three
+models reveals a systematic divergence. Native impurity importance is distorted
+by a known bias towards continuous features, permutation importance collapses
+under the collinearity of the ratios, and SHAP --- the only method yielding
+signed, comparable attributions for every model --- provides the most
+trustworthy ranking, dominated by leverage and debt-servicing measures. The
+thesis argues that this comparison, not any single importance list, is what
+widens the black box.
 
-\textit{\textbf{Keywords: }} % 3-5 keywords, e.g. bankruptcy prediction, undersampling, feature importance, SHAP, imbalanced data
+\vspace{1em}
+\noindent\textit{\textbf{Keywords: }bankruptcy prediction, class imbalance,
+undersampling, feature importance, SHAP}

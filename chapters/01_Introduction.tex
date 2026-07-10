@@ -1,11 +1,73 @@
 \chapter{Introduction}
 \label{ch:introduction}
 
-% EQUATOR: ~1 page. GUIDE (Farbmacher) -- the introduction must:
-%   (1) motivate the topic (why interesting, current reference, larger context);
-%   (2) specify the research question (what is analysed, what is left out);
-%   (3) briefly summarize the literature (with journal-quality awareness -> see ch. Literature);
-%   (4) give an outlook on the most important results + explain the structure of the main part.
-% Positioning: the "Clean Pipeline" -- real historical data only, no synthetic (SMOTE) firms;
-%   extends Wang & Liu (2021) by adding the feature-importance / interpretability layer.
+Corporate bankruptcy is a rare but consequential event. When a firm fails, the
+losses cascade well beyond its own balance sheet: creditors write down loans,
+suppliers lose receivables, employees lose income, and the disturbance can
+propagate through the wider financial system. The ability to anticipate such
+failures from publicly observable financial ratios is therefore of direct
+economic value, and it has motivated a long line of quantitative research on
+bankruptcy prediction. Since the seminal discriminant-analysis models of the
+late 1960s, the field has moved steadily towards machine learning, which can
+accommodate the high dimensionality and the non-linear interactions that
+characterise firm-level financial data \parencite{liang2016}.
 
+A recurring obstacle in this literature is class imbalance. In any realistic
+sample, healthy firms vastly outnumber bankrupt ones; in the Taiwanese data used
+throughout this thesis, only $3.23\%$ of the observations correspond to
+bankruptcies. A classifier that simply predicts ``healthy'' for every firm would
+already achieve an accuracy above $96\%$, yet it would be economically useless
+because it never identifies the very cases that matter. Much of the recent
+high-performance literature addresses this problem through synthetic
+oversampling, most prominently the Synthetic Minority Over-sampling Technique
+(SMOTE), and reports headline accuracies of $98$--$99\%$
+\parencite{pham2025,suresh2025,sinap2025}. This thesis takes a deliberately
+different stance. Synthetic oversampling fabricates bankruptcy observations that
+never occurred in the market; the resulting models are then evaluated, in part,
+on their ability to reproduce data that the researcher invented. We regard this
+as scientifically questionable and instead train exclusively on real historical
+observations, using undersampling of the majority class to restore balance.
+
+\section{Research Question and Scope}
+\label{sec:intro-rq}
+
+The thesis pursues two connected questions. First, how well can bankruptcy be
+predicted on the Taiwanese dataset using a clean, undersampling-only pipeline
+that introduces no synthetic firms, and how does such a pipeline compare to the
+undersampling benchmark of \textcite{wangliu2021}? Second, and more centrally,
+which financial features do the resulting models rely on, and to what extent do
+different feature-importance methods agree on that ranking? The analysis is
+explicitly predictive rather than causal: it asks what the fitted models use,
+not which economic mechanisms cause failure. Questions of causal
+identification, hypothesis testing, and out-of-sample transfer to other markets
+are left outside the scope and revisited only as limitations.
+
+\section{Approach and Contribution}
+\label{sec:intro-contribution}
+
+Methodologically, the thesis builds directly on the undersampling framework of
+\textcite{wangliu2021} --- the same Taiwanese dataset, the same repeated
+stratified cross-validation, and the same emphasis on the $F_2$-score as the
+primary metric, reflecting the asymmetric cost of missing a bankruptcy. Three
+models of increasing complexity are compared: a logistic regression baseline, a
+random forest, and a gradient-boosting classifier. The distinctive contribution
+lies one layer deeper. Where \textcite{wangliu2021} stop at predictive
+performance, this thesis adds an interpretability layer, comparing three
+feature-importance perspectives --- native importance, permutation importance,
+and Shapley additive explanations (SHAP) --- and analysing where and why their
+rankings diverge. The central empirical finding is that this divergence is
+systematic rather than incidental, and that it can be traced to well-understood
+properties of the methods themselves.
+
+The remainder of the thesis is organised as follows.
+Chapter~\ref{ch:literature} situates the work within the bankruptcy-prediction
+literature and carves out the interpretability gap it addresses.
+Chapter~\ref{ch:dataset} describes the Taiwanese dataset.
+Chapter~\ref{ch:methodology} develops the methodological backbone --- data
+preprocessing, undersampling, the three prediction models, the cross-validation
+design, the performance metrics, and hyperparameter optimisation.
+Chapter~\ref{ch:featureimportance} introduces the three feature-importance
+methods. Chapter~\ref{ch:results} reports the predictive results and the
+importance rankings, with the divergence at its centre.
+Chapter~\ref{ch:discussion} interprets these findings, and
+Chapter~\ref{ch:conclusion} concludes.

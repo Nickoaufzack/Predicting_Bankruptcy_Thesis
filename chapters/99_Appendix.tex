@@ -1,27 +1,36 @@
 \chapter{Appendix}
+\label{ch:appendix}
 
-\begin{table}[h!]
-  \begin{center}
-    \caption{Your first table}
-    \label{tab:table1}
-    \begin{tabular}{l|c|r} % <-- Alignments: 1st column left, 2nd middle and 3rd right, with vertical lines in between
-      \textbf{Value 1} & \textbf{Value 2} & \textbf{Value 3}\\
-      $\alpha$ & $\beta$ & $\gamma$ \\
-      \hline
-      1 & 1110.1 & a\\
-      2 & 10.1 & b\\
-      3 & 23.113231 & c\\
-    \end{tabular}
-  \end{center}
-  \floatfoot{A note describing the table.}
-\end{table}
+\section{Complexity and Overfitting Curves}
+\label{sec:app-complexity}
 
-\newpage
+The following figures trace training and validation $F_2$ as the principal
+complexity parameter of each model is swept, providing the overfitting check
+referenced in Section~\ref{sec:hyperparam}. The selected configurations of
+Table~\ref{tab:selected} sit at or before the point where the validation curve
+turns down. As noted in the main text, the depth axis is not comparable across
+the random forest and gradient boosting.
 
-\begin{figure}[h]
-    \centering
-    \caption{My Figure Caption}
-    \includegraphics[width=0.7\textwidth]{tum-resources/images/Universitaet_Flaggen.jpg}
-    \floatfoot{A note describing the figure}
-    \label{fig:ourFigure}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.75\textwidth]{tum-resources/images/complexity_curve_LogisticRegression.png}
+  \caption{Logistic regression: training vs.\ validation $F_2$ across the inverse
+    regularisation strength $C$.}
+  \label{fig:cc-lr}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.75\textwidth]{tum-resources/images/complexity_curve_RandomForest.png}
+  \caption{Random forest: training vs.\ validation $F_2$ across
+    \texttt{max\_depth}.}
+  \label{fig:cc-rf}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.75\textwidth]{tum-resources/images/complexity_curve_GradientBoosting.png}
+  \caption{Gradient boosting: training vs.\ validation $F_2$ across
+    \texttt{max\_depth}.}
+  \label{fig:cc-gb}
 \end{figure}

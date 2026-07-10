@@ -1,37 +1,279 @@
 \chapter{Methodology}
 \label{ch:methodology}
 
-% EQUATOR: ~7-8 pages. The methods backbone. Explainable to a fellow Bachelor student
-%   ("you understand it if you could hand-code it" -- Gabriel). Keyword: "wasserdicht".
+This chapter develops the methodological backbone of the thesis. The design
+follows a single guiding principle: every step of the pipeline must be
+reproducible and free of information leakage, so that the reported scores reflect
+genuine out-of-sample performance rather than an artefact of the evaluation
+procedure. The exposition proceeds in the order in which the operations are
+applied --- preprocessing, undersampling, the prediction models, the
+cross-validation design, the performance metrics, and finally the hyperparameter
+search that ties them together. Throughout, a fixed random seed is used so that
+the entire analysis can be re-executed to the same result.
 
 \section{Data Preprocessing}
 \label{sec:preprocessing}
-% ~0.5 pages. MinMax normalization; leakage avoidance (scaling INSIDE CV folds).
+
+The only preprocessing applied to the continuous features is min--max
+normalisation, which rescales each feature to the unit interval. For a feature
+$x$ the transformed value is
+\begin{equation}
+  x_{\text{scaled}} = \frac{x - x_{\min}}{x_{\max} - x_{\min}},
+  \label{eq:minmax}
+\end{equation}
+where $x_{\min}$ and $x_{\max}$ are the minimum and maximum of that feature.
+Normalisation matters because the logistic regression is penalised and the
+undersampler relies on Euclidean distances; without a common scale, features
+with large numerical ranges would dominate both. The two categorical indicators,
+the \emph{Liability-Assets Flag} and the \emph{Net Income Flag}, are already
+binary and are passed through unchanged.
+
+Crucially, the parameters $x_{\min}$ and $x_{\max}$ in Equation~\eqref{eq:minmax}
+are estimated only on the training portion of each cross-validation fold and are
+then applied to the held-out portion. Fitting the scaler on the full sample
+would let information from the test fold seep into training and inflate the
+scores. As Section~\ref{sec:cv} details, this is enforced structurally by placing
+the scaler inside the cross-validation pipeline rather than applying it once to
+the whole dataset.
 
 \section{Undersampling}
 \label{sec:undersampling}
-% ~1.5-2 pages. ClusterCentroids + K-Means mechanism; voting='hard' keeps REAL firms;
-%   sampling_strategy=0.3 (fixed, for comparability with Wang & Liu). Argument against SMOTE
-%   / no synthetic minority data -- the scientific-integrity contribution.
+
+The imbalance documented in Chapter~\ref{ch:dataset} must be addressed before a
+classifier can learn to recognise bankruptcies. Two routes are available.
+Oversampling generates additional minority observations, whereas undersampling
+removes majority observations until a more even ratio is reached. This thesis
+uses undersampling exclusively, and this is a deliberate scientific commitment
+rather than a technical convenience. Synthetic oversampling methods such as SMOTE
+create bankruptcy observations that never occurred; a model trained and partly
+evaluated on such data is asked to reproduce events the researcher invented. By
+discarding majority observations instead, undersampling keeps every training
+example a real, historically observed firm. The price is a smaller training set,
+which the design below mitigates by retaining representative rather than random
+majority firms.
+
+\subsection{ClusterCentroids}
+\label{sec:clustercentroids}
+
+Concretely, the majority class is condensed using the \emph{ClusterCentroids}
+procedure. The method runs $K$-means over the healthy firms, forming exactly as
+many clusters as firms are to be retained. Each cluster contributes one
+representative to the reduced majority set. With hard voting
+(\texttt{voting=\textquotesingle hard\textquotesingle}), the representative is the
+\emph{real} firm lying closest to the cluster centroid, not the centroid itself.
+This distinction is essential: the default behaviour would return the arithmetic
+centroids, which are synthetic averages of several firms and would silently
+reintroduce exactly the kind of fabricated observation the design seeks to avoid.
+Hard voting guarantees that the condensed majority set consists entirely of
+genuine firms that are, by construction, spread across the feature space so as to
+represent the healthy population well.
+
+The degree of rebalancing is fixed by a sampling strategy of $0.3$, chosen for
+comparability with \textcite{wangliu2021} rather than tuned. Under a stratified
+ten-fold split, each training fold contains $198$ bankrupt firms; a ratio of
+$0.3$ therefore retains $198 / 0.3 = 660$ healthy representatives, condensed from
+the $5{,}939$ healthy firms available in the fold. Table~\ref{tab:fold}
+summarises the resulting composition of a single training fold. The held-out test
+fold is left untouched by the sampler --- it retains the natural class ratio ---
+so that performance is always measured on a realistically imbalanced sample.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Class composition within one cross-validation fold after
+    undersampling. The sampler acts only on the training partition.}
+  \label{tab:fold}
+  \begin{tabular}{lrrr}
+    \toprule
+    & \textbf{Healthy} & \textbf{Bankrupt} & \textbf{Total} \\
+    \midrule
+    Training (before) & $5{,}939$ & $198$ & $6{,}137$ \\
+    Training (after)  & $660$     & $198$ & $858$ \\
+    Test (unchanged)  & $660$     & $22$  & $682$ \\
+    \bottomrule
+  \end{tabular}
+  \floatfoot{Training-fold ratio after undersampling: $76.9\%$ healthy /
+    $23.1\%$ bankrupt.}
+\end{table}
 
 \section{Prediction Models}
 \label{sec:models}
-% ~2-2.5 pages. LR / RF / GB: function + bias-variance contrast; why these three
-%   (simple -> complex; each has its "Daseinsberechtigung"). SVC/kNN/LDA/XGBoost/ANN out.
+
+Three classifiers are compared, deliberately ordered from simple to complex so
+that the added flexibility of each step can be judged against the performance it
+buys. The comparison is framed by the bias--variance trade-off: the logistic
+regression is a low-variance, higher-bias linear model, while the two tree
+ensembles reduce error from opposite directions.
+
+\subsection{Logistic Regression}
+\label{sec:lr}
+
+Logistic regression models the probability of bankruptcy as a sigmoid transform
+of a linear index,
+\begin{equation}
+  P(y = 1 \mid \mathbf{x}) = \sigma(\boldsymbol{\beta}^\top \mathbf{x})
+  = \frac{1}{1 + \exp(-\boldsymbol{\beta}^\top \mathbf{x})},
+  \label{eq:logit}
+\end{equation}
+so that each coefficient $\beta_j$ is the change in the log-odds of bankruptcy
+per unit change in feature $j$. The model is transparent and its coefficients
+carry an economic sign, which makes it the natural interpretable baseline. To
+cope with the many correlated features, an $\ell_1$ or $\ell_2$ penalty is added
+to the log-likelihood; the $\ell_1$ penalty in particular drives some
+coefficients to zero and thus performs an implicit selection. Its main
+limitation is that it can represent only a linear decision boundary in the
+feature space.
+
+\subsection{Random Forest}
+\label{sec:rf}
+
+A random forest is an ensemble of decision trees whose predictions are averaged.
+Each tree is grown on a bootstrap sample of the training data and, at every
+split, is restricted to a random subset of features. Both devices decorrelate
+the individual trees, so that averaging them cancels a large part of the variance
+that a single deep tree would exhibit. The random forest therefore attacks the
+error from the \emph{variance} side: individual trees are allowed to be flexible
+and low-bias, and the ensemble tames their instability. Unlike the logistic
+regression, trees capture threshold effects and interactions between features
+without these having to be specified in advance.
+
+\subsection{Gradient Boosting}
+\label{sec:gb}
+
+Gradient boosting also builds an ensemble of trees, but sequentially rather than
+in parallel. Each new tree is fitted to the residual errors of the current
+ensemble, so that the model gradually corrects its own mistakes. The base
+learners are deliberately shallow --- in the extreme, single-split stumps --- so
+that each contributes only a small refinement. Boosting thus attacks the error
+from the \emph{bias} side: it combines many weak, high-bias learners into a
+low-bias whole, with the learning rate and the number of trees controlling how
+aggressively it does so.
+
+\subsection{Why These Three}
+\label{sec:model-choice}
+
+Together the three models span a coherent methodological range: an interpretable
+linear baseline, a variance-reducing bagging ensemble, and a bias-reducing
+boosting ensemble. Alternatives that were considered but not pursued ---
+support-vector machines, $k$-nearest neighbours, and neural networks --- either
+duplicated the linear boundary of the logistic regression or added flexibility
+without a commensurate gain on this dataset, at the cost of interpretability.
+Restricting the comparison to these three keeps the interpretability analysis of
+Chapter~\ref{ch:featureimportance} tractable, since each additional model
+multiplies the number of importance rankings to be reconciled.
 
 \section{Cross-Validation}
 \label{sec:cv}
-% ~1 page. RepeatedStratifiedKFold (10 x 3 = 30 fits); leakage-free imblearn Pipeline
-%   (MinMaxScaler -> ClusterCentroids -> model); embedded GridSearch.
+
+Performance is estimated by repeated stratified $k$-fold cross-validation, using
+ten folds repeated three times, for a total of $30$ train/test evaluations per
+model. Stratification preserves the $3.23\%$ bankruptcy rate in every fold, which
+is indispensable at this level of imbalance, and the three repetitions average
+out the sensitivity of the estimate to any particular partition.
+
+The essential design decision concerns the order of operations. Both the min--max
+scaler of Section~\ref{sec:preprocessing} and the undersampler of
+Section~\ref{sec:undersampling} are fitted \emph{inside} each training fold and
+never see the test fold. This is implemented through an \texttt{imbalanced-learn}
+pipeline that chains scaler, sampler, and classifier; when the pipeline is
+evaluated on a fold, the sampler is applied to the training partition only and is
+automatically skipped at test time, while the scaler transforms the test
+partition using parameters learned on the training partition. Chaining the steps
+in this way makes leakage structurally impossible rather than merely a matter of
+discipline. The hyperparameter search of Section~\ref{sec:hyperparam} is nested
+within this same loop, so that every candidate configuration is subjected to the
+full $30$-fit evaluation.
 
 \section{Performance Metrics}
 \label{sec:metrics}
-% ~1 page. Confusion matrix; P / R / F1 / F-beta formulas; F2 justification
-%   (recall weighted 2x -- a missed bankruptcy costs more). Accuracy & ROC-AUC misleading
-%   under 96.8/3.2 imbalance -> reported but never used for selection.
 
-\section{Hyperparameter Optimization}
+All metrics derive from the confusion matrix, which cross-tabulates predicted
+against actual classes into true positives (TP), false positives (FP), false
+negatives (FN), and true negatives (TN), where the positive class is bankruptcy.
+Table~\ref{tab:confusion-schema} fixes the notation.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Confusion-matrix notation, with bankruptcy as the positive class.}
+  \label{tab:confusion-schema}
+  \begin{tabular}{llcc}
+    \toprule
+    & & \multicolumn{2}{c}{\textbf{Predicted}} \\
+    \cmidrule(lr){3-4}
+    & & Bankrupt & Healthy \\
+    \midrule
+    \multirow{2}{*}{\textbf{Actual}}
+      & Bankrupt & TP & FN \\
+      & Healthy  & FP & TN \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+From these counts, precision and recall are defined as
+\begin{equation}
+  \text{Precision} = \frac{\text{TP}}{\text{TP} + \text{FP}}, \qquad
+  \text{Recall} = \frac{\text{TP}}{\text{TP} + \text{FN}},
+  \label{eq:precrec}
+\end{equation}
+where precision is the share of predicted bankruptcies that are genuine and
+recall is the share of genuine bankruptcies that are detected. The two are
+combined by the $F_\beta$-score, a weighted harmonic mean,
+\begin{equation}
+  F_\beta = (1 + \beta^2)\,
+  \frac{\text{Precision} \cdot \text{Recall}}
+       {\beta^2 \cdot \text{Precision} + \text{Recall}},
+  \label{eq:fbeta}
+\end{equation}
+which reduces to the familiar $F_1$ for $\beta = 1$. This thesis adopts
+$\beta = 2$ as the primary metric. Setting $\beta = 2$ weights recall four times
+as heavily as precision in Equation~\eqref{eq:fbeta}, reflecting the economic
+asymmetry of the problem: failing to flag a firm that subsequently goes bankrupt
+(a false negative) is far more costly than a false alarm that triggers closer
+inspection of a healthy firm. The same choice is made by \textcite{wangliu2021},
+which preserves comparability.
+
+Accuracy and the area under the ROC curve are reported as secondary figures but
+are never used for model selection. At a $96.8/3.2$ split, accuracy is dominated
+by the majority class and rewards the trivial ``always healthy'' classifier,
+while the ROC curve, which weights both classes symmetrically, likewise paints an
+over-optimistic picture under strong imbalance. The $F_2$-score, focused on the
+minority class, is the metric on which all decisions are based.
+
+\section{Hyperparameter Optimisation}
 \label{sec:hyperparam}
-% ~1 page. GridSearch results; overfitting check. Complexity/U-curves -> APPENDIX, one
-%   sentence in main text. Note: max_depth is not comparable across RF vs GB.
 
+For each model, hyperparameters are selected by an exhaustive grid search nested
+inside the cross-validation loop: every configuration is scored by its
+fold-averaged $F_2$, and the best configuration is retained.
+Table~\ref{tab:grids} lists the search spaces and the sizes of the resulting
+grids.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Hyperparameter search spaces per model.}
+  \label{tab:grids}
+  \begin{tabular}{lll}
+    \toprule
+    \textbf{Model} & \textbf{Hyperparameters searched} & \textbf{Grid} \\
+    \midrule
+    Logistic Regression & penalty ($\ell_1$/$\ell_2$), $C$ & $12$ \\
+    Random Forest       & \texttt{n\_estimators}, \texttt{max\_depth},
+                          \texttt{max\_features}, \texttt{min\_samples\_leaf} & $36$ \\
+    Gradient Boosting   & \texttt{learning\_rate}, \texttt{n\_estimators},
+                          \texttt{max\_depth}, \texttt{subsample},
+                          \texttt{min\_samples\_leaf} & $12$ \\
+    \bottomrule
+  \end{tabular}
+  \floatfoot{Each configuration is evaluated over the full $30$-fit
+    cross-validation.}
+\end{table}
+
+Two points deserve emphasis. First, the same nominal hyperparameter can mean
+different things across models: a \texttt{max\_depth} of $10$ in the random
+forest and of $2$ in gradient boosting are not comparable, because the forest
+relies on deep, decorrelated trees whereas boosting relies on many shallow ones.
+Depth values should therefore be read within, not across, models. Second, to
+guard against overfitting, training and validation $F_2$ were traced as the key
+complexity parameters were swept; the resulting complexity curves are collected
+in Appendix~\ref{ch:appendix} and confirm that the selected configurations sit
+at or before the onset of overfitting. The selected values and their scores are
+reported in Chapter~\ref{ch:results}.
