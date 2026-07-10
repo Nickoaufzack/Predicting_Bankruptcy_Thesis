@@ -1,0 +1,36 @@
+\chapter{Feature Importance}
+\label{ch:featureimportance}
+
+% EQUATOR: ~2.5-3 pages (method here + FI results in ch. Results ~= 4 pages total).
+%   This is the thesis's CENTRAL CONTRIBUTION. Explains the three methods (NOT the results).
+% GUIDE/Gabriel (Meeting 6): written for a Bachelor reader who does not know SHAP.
+% CAUSAL CAUTION up front and audible throughout: FI is ASSOCIATIVE, not causal.
+
+\section{Associative, Not Causal (Scope)}
+\label{sec:fi-caution}
+% Without hypothesis tests / causal identification, all FI statements describe what the
+%   model relies on for prediction -- not economic mechanisms that cause bankruptcy.
+
+\section{Native Importance}
+\label{sec:fi-native}
+% LR signed coefficients (log-odds, direction-bearing); RF/GB Gini impurity importance
+%   (unsigned, biased toward continuous/high-cardinality features -- Strobl et al. 2007).
+
+\section{Permutation Importance}
+\label{sec:fi-permutation}
+% Model-agnostic, F2 scorer, 10 repeats. Performance-drop when a feature is shuffled.
+%   Weakness under correlation: with 95 correlated features -> tiny values (correlation masking).
+
+\section{SHAP}
+\label{sec:fi-shap}
+% Weight here. Start from the full Shapley value (coalitions/factorials -- Gabriel wants the
+%   COMPLEX formula, not just the simplified one). Show why exact computation is infeasible
+%   (2^94). Then LinearExplainer (LR) and TreeExplainer (RF/GB) as exact heuristics.
+%   SHAP = the only method giving SIGNED importance for ALL three models -> common axis.
+%   Reference: Lundberg & Lee.
+
+\section{Permutation vs. SHAP: Pro / Contra}
+\label{sec:fi-procontra}
+% Gabriel directive (Meeting 6): the red thread. First GENERAL textbook advantages/disadvantages,
+%   then SPECIFIC to this correlated dataset. LIME non-use: optional short content justification.
+

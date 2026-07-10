@@ -1,0 +1,37 @@
+\chapter{Methodology}
+\label{ch:methodology}
+
+% EQUATOR: ~7-8 pages. The methods backbone. Explainable to a fellow Bachelor student
+%   ("you understand it if you could hand-code it" -- Gabriel). Keyword: "wasserdicht".
+
+\section{Data Preprocessing}
+\label{sec:preprocessing}
+% ~0.5 pages. MinMax normalization; leakage avoidance (scaling INSIDE CV folds).
+
+\section{Undersampling}
+\label{sec:undersampling}
+% ~1.5-2 pages. ClusterCentroids + K-Means mechanism; voting='hard' keeps REAL firms;
+%   sampling_strategy=0.3 (fixed, for comparability with Wang & Liu). Argument against SMOTE
+%   / no synthetic minority data -- the scientific-integrity contribution.
+
+\section{Prediction Models}
+\label{sec:models}
+% ~2-2.5 pages. LR / RF / GB: function + bias-variance contrast; why these three
+%   (simple -> complex; each has its "Daseinsberechtigung"). SVC/kNN/LDA/XGBoost/ANN out.
+
+\section{Cross-Validation}
+\label{sec:cv}
+% ~1 page. RepeatedStratifiedKFold (10 x 3 = 30 fits); leakage-free imblearn Pipeline
+%   (MinMaxScaler -> ClusterCentroids -> model); embedded GridSearch.
+
+\section{Performance Metrics}
+\label{sec:metrics}
+% ~1 page. Confusion matrix; P / R / F1 / F-beta formulas; F2 justification
+%   (recall weighted 2x -- a missed bankruptcy costs more). Accuracy & ROC-AUC misleading
+%   under 96.8/3.2 imbalance -> reported but never used for selection.
+
+\section{Hyperparameter Optimization}
+\label{sec:hyperparam}
+% ~1 page. GridSearch results; overfitting check. Complexity/U-curves -> APPENDIX, one
+%   sentence in main text. Note: max_depth is not comparable across RF vs GB.
+
