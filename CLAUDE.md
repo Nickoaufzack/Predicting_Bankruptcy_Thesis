@@ -16,10 +16,10 @@ Code, results, and storyline are finished. What remains is writing the thesis.
 - **Title:** *Predicting Bankruptcy with Machine Learning: An Undersampling and Feature Importance Approach using a Taiwanese Dataset*
 - **Author:** Niklas Demmrich (TUM B.Sc. Management & Technology)
 - **Supervisor:** Gabriel, Chair of Applied Econometrics (informal "du" — never formal address)
-- **Official deadline:** August 15, 2026
-- **Personal target (last resort):** July 31, 2026
-- **Real working target:** ~July 17, 2026 — draft finished to send out for peer review
-- **Milestone context:** Graduation celebration ~July 23 — ideal to be finished (feedback incorporated) by then, not necessarily submitted, just done and stress-free.
+- **Official deadline:** August 15, 2026 (exists on paper but NOT usable — see below).
+- **Effective HARD deadline:** July 31, 2026 — Niklas flies to Thailand on August 2, so nothing can happen in the first half of August. Treat July 31 as the real, non-negotiable submission deadline; the August 15 date is irrelevant in practice.
+- **Real working target:** ~July 17, 2026 — draft finished to send out for peer review.
+- **Milestone context:** Graduation party on **July 25, 2026** (friends from the previous year; Niklas is not attending his own graduation but wants to celebrate with them). Ideal to be **"done enough" before the party** — i.e. content finished so he can go in with a relaxed, celebratory mood. Outstanding layout polish and some incoming peer feedback after the 25th are totally fine.
 - **Work rhythm from July 9:** Full days (~9–19h), daily. No hard limits — pace is comfortable, buffer is deliberate to avoid end-stress.
 - **6 supervisor meetings held.** All transcripts are in the project knowledge base.
 

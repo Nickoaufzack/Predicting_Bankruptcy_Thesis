@@ -1,13 +1,13 @@
 \chapter{Dataset}
 \label{ch:dataset}
 
-The empirical analysis uses the Taiwanese Bankruptcy Dataset, a well-established
-benchmark compiled from the Taiwan Economic Journal and covering listed firms
-over the period 1999--2009. It is the same dataset studied by
-\textcite{wangliu2021}, which makes the two works directly comparable. The data
-comprise $6{,}819$ firm-year observations described by $95$ financial features
-and a single binary target that records whether a firm was declared bankrupt.
-Table~\ref{tab:dataset} summarises its composition.
+This analysis uses the Taiwanese Bankruptcy Dataset, a well-established benchmark
+compiled from the Taiwan Economic Journal \footnote{\url{https://www.tejwin.com}} from 1999 to 2009 and made accessible
+through the \textcite{uci_taiwan}. Corporate bankruptcy was defined based on the
+rules of the Taiwan Stock Exchange.\footnote{\url{https://twse-regulation.twse.com.tw/EN/law/DOC01_print.aspx?FLCODE=FL007304&FLNO=50-1}} 
+It contains $6{,}819$ companies, each described by $95$ financial attributes covering standard business performance metrics such as 
+Return on Assets (ROA), the Debt Ratio, Cash Flow Rate or Earnings per Share (EPS). Outcome is simply measured by one binary variable 
+of either 0 = healthy or 1 = bankrupt.
 
 \begin{table}[htbp]
   \centering
@@ -26,28 +26,22 @@ Table~\ref{tab:dataset} summarises its composition.
   \floatfoot{Binary target; $95$ financial features per observation.}
 \end{table}
 
-The $95$ features span the standard categories of firm-level financial analysis:
-profitability ratios such as return on assets, leverage and solvency ratios such
-as the debt ratio, liquidity ratios, turnover and efficiency ratios, and
-per-share value measures. The overwhelming majority are continuous ratios. Two
-features are exceptions and are treated as categorical throughout: the
-\emph{Liability-Assets Flag} and the \emph{Net Income Flag}, each taking the
-values $0$ or $1$. Because they are indicators rather than magnitudes, they are
-excluded from the continuous-feature normalisation described in
-Section~\ref{sec:preprocessing}.
+Given this setup, two problems arise that shape the entire analysis. First one being the obvious severe class imbalance 
+already visible in Table~\ref{tab:dataset}. By the nature of the problem, bankruptcies are rare events, here making up only 3.23\% 
+of all observations. A naive classifier trained on the full data could reach very high accuracies just by labeling almost every company as 
+healthy, but it would be predictively worthless: it gets the 96.77\% of healthy firms right while missing the very cases we care about, 
+the 3.23\% that actually go bankrupt. 
 
-Two properties of the data shape the entire analysis. The first is the severe
-class imbalance already visible in Table~\ref{tab:dataset}: with bankrupt firms
-accounting for only $3.23\%$ of observations, a naive classifier can achieve high
-accuracy while being predictively worthless, which motivates both the
-undersampling design of Section~\ref{sec:undersampling} and the choice of the
-$F_2$-score in Section~\ref{sec:metrics}. The second is the high dimensionality
-combined with pronounced multicollinearity among the $95$ ratios: many features
-are algebraic transformations or close relatives of one another, so that
-distinct ratios carry overlapping information. This redundancy is largely benign
-for predictive accuracy but has direct consequences for feature importance, as
-Chapters~\ref{ch:featureimportance} and \ref{ch:results} will show. A number of
-further questions --- the absence of macroeconomic controls, the sector
-composition of the sample, and the precise legal definition of the bankruptcy
-event --- are raised here but left open, since they bear on interpretation
-rather than on the predictive exercise itself.
+The second problem is the multicollinearity that comes with this high dimensionality. Many of the 95 ratios are just algebraic transformations 
+or close relatives of one another. Return on Assets for example has ROA(A) before interest and after tax and ROA(B) before interest and 
+depreciation after tax, which differ only in the treatment of depreciation. Another is Cash Flow Per Share and Operating Profit Per Share. 
+Both obviously share the same denominator (shares outstanding) but also track operating performance, so their numerators move closely together too. As a result, distinct 
+columns carry very similar information. Both of these problems need to be understood and addressed in order to build an accurate and interpretable
+model.
+
+% Other question like the integrity of the Dataset (why is it showing a point in time view of financial data and than
+% just showing if it went bankrupt or not what about the financial crisis in 2008 where is bias is this dataset even able to represent
+% bankruptcy as a whole) are raised here but left open, since they bear on interpretation
+% rather than on the predictive exercise itself. While we want to see and compare results this analysis focuses on building a clean reproducable
+% pipeline comparibility oriented approach on bankruptcy prediction, not to infer causal economic or financial insights from the data withput hypothesis
+% tesing and crosschecking scientific fundamental standards to a dataset.

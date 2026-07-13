@@ -6,7 +6,7 @@
 \titledescription{Thesis
 for the Attainment of the Degree\\
   \textbf{Bachelor of Science}\\
-  at TUM School of Management of the Technical University of Munich}
+  at the Technical University of Munich}
 \fineprint{%
   \textbf{Examiner}\\
   Prof. Dr. Helmut Farbmacher\\
@@ -27,11 +27,17 @@ for the Attainment of the Degree\\
 \usepackage{booktabs} % professional table rules (\toprule \midrule \bottomrule)
 \usepackage{multirow} % \multirow cells in the confusion-matrix table
 
+% search paths for figures -> \includegraphics needs only the filename
+\graphicspath{{figures/results/}{figures/appendix/}{tum-resources/images/}}
+
 \begin{document}
 
 
-\input{chapters/00_Abstract}
-\newpage
+% Abstract removed per supervisor (Gabriel): the summary + research question fold
+% into the Introduction. Content kept in chapters/00_Abstract.tex as raw material;
+% revisit when the Introduction is written.
+%\input{chapters/00_Abstract}
+%\newpage
 
 \tableofcontents
 \listoftables

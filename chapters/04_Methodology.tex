@@ -1,40 +1,75 @@
 \chapter{Methodology}
 \label{ch:methodology}
 
-This chapter develops the methodological backbone of the thesis. The design
-follows a single guiding principle: every step of the pipeline must be
-reproducible and free of information leakage, so that the reported scores reflect
-genuine out-of-sample performance rather than an artefact of the evaluation
-procedure. The exposition proceeds in the order in which the operations are
-applied --- preprocessing, undersampling, the prediction models, the
-cross-validation design, the performance metrics, and finally the hyperparameter
-search that ties them together. Throughout, a fixed random seed is used so that
-the entire analysis can be re-executed to the same result.
+This chapter builds the methodological backbone of the thesis, while tackling the first forementioned problem of class imbalance. It evolves around the pipeline and tools used, which are grounded in the relevant scientific 
+theory to build the prediction model. The Multicollinearity is addressed in the following chapter on Feature Importance. While others handle correlation through feature selection already at this stage 
+(\textcite{pham2025}, \textcite{chaudhary2023}), this thesis takes a different approach by working with all the data to " ... preserve the integrity" (\textcite{wangliu2021})
+and address the redundancy from high correlation in the main contribution of this thesis in Chapter~\ref{ch:featureimportance}.
+The guiding idea is a pipeline that is reproducible at every step, follows established best practices, and trains only on real, historically observed firms rather than synthetic samples. 
+% A fixed random seed keeps every result reproducible. Scaling and resampling happen strictly inside the cross-validation folds, so no information leaks from the test data into training.
+The pipeline rests on three core components: data preprocessing, undersampling and the prediction models, which are all wrapped inside a cross-validation loop that, through an embedded hyperparameter search, 
+gives us different performance metrics.
+
 
 \section{Data Preprocessing}
 \label{sec:preprocessing}
 
-The only preprocessing applied to the continuous features is min--max
-normalisation, which rescales each feature to the unit interval. For a feature
-$x$ the transformed value is
+The only transformation applied to the continuous features is min--max
+normalisation, which rescales each feature onto the unit interval $[0,1]$.
+Writing $F$ for the set of values a given feature takes across all firms, every
+value $x \in F$ is mapped to
 \begin{equation}
-  x_{\text{scaled}} = \frac{x - x_{\min}}{x_{\max} - x_{\min}},
+  x' \;=\; \frac{x - \min(F)}{\max(F) - \min(F)}, \qquad \forall\, x \in F,
   \label{eq:minmax}
 \end{equation}
-where $x_{\min}$ and $x_{\max}$ are the minimum and maximum of that feature.
-Normalisation matters because the logistic regression is penalised and the
-undersampler relies on Euclidean distances; without a common scale, features
-with large numerical ranges would dominate both. The two categorical indicators,
-the \emph{Liability-Assets Flag} and the \emph{Net Income Flag}, are already
-binary and are passed through unchanged.
+where $\min(F)$ and $\max(F)$ are the smallest and largest values of that
+feature. We follow the normalisation used by the dataset's originators
+\parencite[562--563]{liang2016} and by \textcite[5]{wangliu2021}, and implement
+it with scikit-learn's \texttt{MinMaxScaler}. Two features, the
+\emph{Liability-Assets Flag} and the \emph{Net Income Flag}, are already binary
+$0/1$ indicators rather than continuous ratios and are passed through unchanged.
 
-Crucially, the parameters $x_{\min}$ and $x_{\max}$ in Equation~\eqref{eq:minmax}
-are estimated only on the training portion of each cross-validation fold and are
-then applied to the held-out portion. Fitting the scaler on the full sample
-would let information from the test fold seep into training and inflate the
-scores. As Section~\ref{sec:cv} details, this is enforced structurally by placing
-the scaler inside the cross-validation pipeline rather than applying it once to
-the whole dataset.
+The choice of scaling follows from the components we use rather than from the
+data alone. The two tree ensembles are invariant to monotone transformations of
+the features: their splits depend only on the rank order of the values, which a
+transformation such as $\log(x)$ leaves unchanged. Two other components, however,
+are scale-sensitive. Logistic regression is not scale-invariant --- under an
+$\ell_1$ or $\ell_2$ penalty the scale of a feature affects how strongly its
+coefficient is shrunk --- so a common scale is needed for the penalty to treat
+all coefficients comparably; and the \emph{ClusterCentroids} undersampler
+(Section~\ref{sec:undersampling}) relies on Euclidean distances, which are only
+meaningful once features share a scale. Min--max normalisation supplies that
+scale. This is where we depart from \textcite{wangliu2021}, who additionally
+apply a logarithmic transformation to reduce skewness: that step suits their
+distribution-sensitive naive-Bayes classifier, whereas our rank-based ensembles
+and penalised linear model gain nothing from it, so we keep preprocessing to the
+single min--max step. The scaler's minimum and maximum are estimated on each
+fold's training portion only, never on the full dataset, so that no test
+information leaks into training; the fold mechanics follow in
+Section~\ref{sec:cv}.
+
+
+% The only preprocessing applied to the continuous features is min--max
+% normalisation, which rescales each feature to the unit interval. For a feature
+% $x$ the transformed value is
+% \begin{equation}
+%   x_{\text{scaled}} = \frac{x - x_{\min}}{x_{\max} - x_{\min}},
+%   \label{eq:minmax}
+% \end{equation}
+% where $x_{\min}$ and $x_{\max}$ are the minimum and maximum of that feature.
+% Normalisation matters because the logistic regression is penalised and the
+% undersampler relies on Euclidean distances; without a common scale, features
+% with large numerical ranges would dominate both. The two categorical indicators,
+% the \emph{Liability-Assets Flag} and the \emph{Net Income Flag}, are already
+% binary and are passed through unchanged.
+
+% Crucially, the parameters $x_{\min}$ and $x_{\max}$ in Equation~\eqref{eq:minmax}
+% are estimated only on the training portion of each cross-validation fold and are
+% then applied to the held-out portion. Fitting the scaler on the full sample
+% would let information from the test fold seep into training and inflate the
+% scores. As Section~\ref{sec:cv} details, this is enforced structurally by placing
+% the scaler inside the cross-validation pipeline rather than applying it once to
+% the whole dataset.
 
 \section{Undersampling}
 \label{sec:undersampling}

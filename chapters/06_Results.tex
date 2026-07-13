@@ -155,7 +155,7 @@ ranking and its direction.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.82\textwidth]{tum-resources/images/shap_LogisticRegression_bar.png}
+  \includegraphics[width=0.82\textwidth]{shap_LogisticRegression_bar.png}
   \caption{Mean absolute SHAP values for the logistic regression (bankruptcy
     class). The \emph{Debt ratio} dominates, consistent with its native
     coefficient and permutation importance.}
@@ -175,17 +175,33 @@ corrected ranking together with the direction of each feature's effect.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.82\textwidth]{tum-resources/images/shap_GradientBoosting_beeswarm.png}
+  \includegraphics[width=0.82\textwidth]{shap_GradientBoosting_beeswarm.png}
   \caption{SHAP summary (beeswarm) for gradient boosting, bankruptcy class.
     \emph{Borrowing dependency} ranks first, ahead of \emph{Persistent EPS},
     correcting the impurity-based ordering.}
   \label{fig:shap-gb}
 \end{figure}
 
+The correction is only partial for the random forest, whose SHAP ranking, shown
+in Figure~\ref{fig:shap-rf}, still places Persistent EPS first with Borrowing
+dependency close behind. That the same importance method yields a fully corrected
+ordering for gradient boosting but only a partial one for the random forest
+underlines that importance is a joint property of the method \emph{and} the model,
+not of the data alone.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.82\textwidth]{shap_RandomForest_beeswarm.png}
+  \caption{SHAP summary (beeswarm) for the random forest, bankruptcy class.
+    \emph{Persistent EPS} remains first, with \emph{Borrowing dependency} second
+    --- a weaker correction of the impurity ordering than for gradient boosting.}
+  \label{fig:shap-rf}
+\end{figure}
+
 Third, permutation importance behaves very differently on the ensembles: its
 values are an order of magnitude smaller and its ranking is unstable, with
 minor features such as \emph{Interest Expense Ratio} surfacing at the top of the
-random forest. This is the correlation-masking effect anticipated in
+random forest (Figure~\ref{fig:perm-rf}). This is the correlation-masking effect anticipated in
 Section~\ref{sec:fi-permutation}: among $95$ collinear ratios, permuting any
 single feature barely moves the score because a correlated substitute remains.
 Figure~\ref{fig:perm-gb} shows the characteristically compressed permutation
@@ -196,7 +212,17 @@ taken up in the discussion.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.82\textwidth]{tum-resources/images/permutation_GradientBoosting.png}
+  \includegraphics[width=0.82\textwidth]{permutation_RandomForest.png}
+  \caption{Permutation importance ($F_2$ drop) for the random forest. The top
+    feature, \emph{Interest Expense Ratio}, differs from both the native and SHAP
+    rankings, and all values are small --- the same correlation-masking signature
+    seen for gradient boosting.}
+  \label{fig:perm-rf}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.82\textwidth]{permutation_GradientBoosting.png}
   \caption{Permutation importance ($F_2$ drop) for gradient boosting. Values are
     uniformly small --- a signature of correlation masking under high feature
     collinearity.}
