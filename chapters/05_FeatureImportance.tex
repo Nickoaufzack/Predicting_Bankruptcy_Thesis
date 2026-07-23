@@ -94,6 +94,7 @@ simple, additive pieces with a starting value plus one contribution for each fea
   g(z') = \phi_0 + \sum_{i=1}^{95} \phi_i z_i',
   \label{eq:shap-additive}
 \end{equation}
+
 Here $g(z')$ is an explanation model, a replica that rebuilds the model's true
 prediction by adding different pieces together. The first is the base value $\phi_0$,
 an average prediction across all firms, before the model knows anything about the
@@ -106,42 +107,58 @@ for. The switch $z_i' \in \{0,1\}$ only states whether
 feature $i$ is included ($1$) or left out ($0$).
 
 The question is then how to find each contribution $\phi_i$, the Shapley value of
-feature $i$. It is the one fair way, taken from cooperative game theory, to split the
-``payout'' of a prediction among the features, treating them as players that
+feature $i$. It comes from cooperative game theory as the fair way to divide the
+``payoff'' of a prediction among the features, treating them as players that
 cooperate. A feature's contribution is how much it changes the prediction when it
 joins a group of the other features, or coalition, averaged over every possible
-group. Writing $F$ for the full set of features, the model with feature $i$ present,
-$f_{S \cup \{i\}}$, is compared with the model without it, $f_S$, across every group
-$S$ of the remaining features:
+group. Writing $F$ for the full set of features, each term in the sum measures that
+change for one group $S$ and the sum runs over every group, weighted by the
+fraction in front:
 \begin{equation}
   \phi_i = \sum_{S \subseteq F \setminus \{i\}}
   \frac{|S|!\,\bigl(|F| - |S| - 1\bigr)!}{|F|!}
   \left[\, f_{S \cup \{i\}}\!\left(x_{S \cup \{i\}}\right) - f_S\!\left(x_S\right) \right].
   \label{eq:shap-shapley}
 \end{equation}
-The fraction in front weights each group by how many orders feature $i$ could have
-joined it in, so that $\phi_i$ is a weighted average of what the feature adds across
-all groups. That averaging is what makes the split fair, but it is also what makes it
-impossible to compute directly. There is one group for every combination of the
-other features, $2^{|F|-1}$ of them, so with $95$ features this is $2^{94}$ groups per
-feature, far beyond anything that can be listed out.
+What is in the square bracket is that mentioned change. $f_{S \cup \{i\}}$ is the 
+prediction from the
+group $S$ together with feature $i$, read on their feature values
+$x_{S \cup \{i\}}$. $f_S$ is the same prediction without $i$, so the difference
+is what feature $i$ adds to the group. The fraction in front is a weight. It follows 
+from the features joining the coalition
+one at a time in a random order, where feature $i$'s effect depends on which features 
+are already in the coalition $S$ when
+it enters. The factorials just count how
+many of these line-ups put exactly the group $S$ before $i$: $|S|!$ arranges the
+features inside $S$, $(|F| - |S| - 1)!$ arranges the ones that come after $i$ and
+$|F|!$ is the number of line-ups in total, so the fraction is how common that
+arrangement is. With it, $\phi_i$ becomes feature $i$'s average contribution over
+every order in which it could join, which is what makes the split fair. It is also
+what makes it impossible to compute directly, because there is one group for every
+combination of the other features, $2^{|F|-1}$ of them, so with $95$ features this is
+$2^{94}$ groups per feature, far beyond anything that could be computed.
 
 The way around this is to use the structure of each model to reach the same values
-without ever listing the groups. For the logistic regression, a linear explainer
-(LinearSHAP) reads the Shapley values directly from the coefficients. For the two
-tree ensembles, a tree explainer (TreeSHAP) walks through the trees and recovers the
-exact values in a tiny fraction of the time. In both cases the values are computed
-for the bankruptcy class across all firms, and a feature's overall importance is
-summarised by the mean absolute SHAP value across firms, reported in
-Chapter~\ref{ch:results}.
+without ever calculating those $2^{94}$ groups. Both come from the \texttt{shap}
+library \parencite{lundberg2017}. For the logistic regression, 
+\texttt{LinearExplainer}\footnote{\url{https://shap.readthedocs.io/en/latest/generated/shap.LinearExplainer.html}}
+reads the Shapley values directly from the coefficients. For the two tree ensembles,
+\texttt{TreeExplainer}\footnote{\url{https://shap.readthedocs.io/en/latest/generated/shap.TreeExplainer.html}} 
+walks through the trees and recovers the exact values in a
+tiny fraction of the time. In both cases the values are computed for the 
+bankruptcy class across all firms and are exact Shapley values rather than 
+approximations.
 
-Two properties make SHAP the interpretive centre of gravity for this thesis. First,
-it returns \emph{signed} attributions for \emph{all three} models: the logistic
-coefficients are signed but only linear, and the impurity importance is unsigned,
-whereas SHAP places every model on the same signed, additive axis and so makes their
-rankings directly comparable. Second, because it looks at whole groups of features
-rather than changing one feature at a time, it does not collapse under the
-correlation that so weakens permutation importance. Where the three methods disagree,
-as they will in Chapter~\ref{ch:results}, SHAP provides the most trustworthy reading,
-while permutation importance keeps its value precisely because its collapse diagnoses
-the redundancy of the data.
+Two properties make SHAP the interpretive center of this thesis. First, it returns
+signed contributions for all three models, where the logistic coefficients are signed
+but only linear and the impurity importance has no sign at all, SHAP puts every model
+on the same signed scale and makes them directly comparable. Second, because
+it works with whole groups of features rather than changing one at a time, it does not
+collapse under the redundancy that impacts permutation importance. Although it is not fully
+immune to that redundancy, with near-identical twins it shares their joint
+contribution between them, so a redundant pair is spread across two smaller entries.
+But unlike impurity, which splits the credit arbitrarily, or permutation, which
+hides it, SHAP keeps both the total and the sign, so the pair stays readable. This is
+why SHAP gives the most trustworthy reading, but is still compared against the other
+two rather than trusted alone in Chapter~\ref{ch:results}. It is the pattern across 
+them, not any single method, that carries the insight.
