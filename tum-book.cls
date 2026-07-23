@@ -274,8 +274,8 @@ This paper was not previously presented to another examination board and has not
 \usepackage[labelfont=bf,textfont=it,singlelinecheck=off,justification=raggedright]{caption}
 \renewcommand{\thefigure}{\arabic{figure}}
 \renewcommand{\thetable}{\arabic{table}}
-\setlength{\abovecaptionskip}{15pt plus 3pt minus 2pt}
-\setlength{\belowcaptionskip}{15pt plus 3pt minus 2pt}
+\setlength{\abovecaptionskip}{6pt plus 2pt minus 1pt}
+\setlength{\belowcaptionskip}{3pt plus 1pt minus 1pt}
 \captionsetup[figure]{labelsep=newline}
 \captionsetup[table]{labelsep=newline}
 

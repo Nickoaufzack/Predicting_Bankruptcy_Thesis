@@ -11,9 +11,6 @@ established outlets and treats the more recent, method-heavy conference
 literature with corresponding caution regarding the reliability of its
 reported gains.
 
-\section{From Statistical Models to Machine Learning}
-\label{sec:lit-ml}
-
 Early bankruptcy prediction relied on discriminant analysis and, later, on logit
 and probit models estimated over a handful of financial ratios. These models are
 transparent and their coefficients carry an economic sign, but they impose
@@ -27,9 +24,6 @@ groundwork on which subsequent studies, including this one, implicitly rely. At
 the same time, \textcite{liang2016} adopt a forced balancing of the two classes,
 a design choice that later work has questioned and that the present thesis
 deliberately avoids.
-
-\section{Class Imbalance and Sampling Strategies}
-\label{sec:lit-imbalance}
 
 Because bankruptcies are rare, the treatment of class imbalance has become a
 defining methodological question. \textcite{veganzones2018} investigate the
@@ -63,9 +57,6 @@ a $96.8/3.2$ split. The present thesis treats this literature as a benchmark to
 argue against rather than to emulate, prioritising the integrity of the training
 data over marginal gains in reported performance.
 
-\section{Feature Selection versus Feature Importance}
-\label{sec:lit-fi}
-
 A final strand concerns which features drive the predictions. Several studies
 approach this through upfront feature \emph{selection}. \textcite{chaudhary2023},
 for instance, uses Pearson correlation to screen features on the Taiwanese
@@ -87,5 +78,3 @@ the impurity bias of tree-based importances documented by \textcite{strobl2007},
 the tuning behaviour of random forests analysed by \textcite{probst2019}, and
 the unified Shapley framework of \textcite{lundberg2017} --- are introduced where
 they are used, in Chapters~\ref{ch:methodology} and \ref{ch:featureimportance}.
-
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. 

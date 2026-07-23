@@ -9,9 +9,6 @@ predictive reliance only; the economic reading is deferred to
 Chapter~\ref{ch:discussion}, and the associative caveat of
 Chapter~\ref{ch:featureimportance} applies throughout.
 
-\section{Predictive Performance}
-\label{sec:res-performance}
-
 Table~\ref{tab:performance} reports each model at its best hyperparameter
 configuration, averaged over the $30$ cross-validation fits with standard
 deviations. Read through the primary metric, the two tree ensembles clearly
@@ -50,7 +47,7 @@ precisely how flattering that symmetric metric looks under imbalance.
 \end{table}
 
 The selected hyperparameters are listed in Table~\ref{tab:selected}. In line with
-the remark in Section~\ref{sec:hyperparam}, the depth values are not comparable
+the remark in Section~\ref{subsec:gb}, the depth values are not comparable
 across families: the random forest favours deep trees (\texttt{max\_depth} $=10$)
 decorrelated by feature subsampling, whereas gradient boosting favours very
 shallow trees (\texttt{max\_depth} $=2$) combined through a small learning rate.
@@ -115,9 +112,6 @@ figures will be inserted here.]}
     the final exported figure.}
   \label{fig:roc}
 \end{figure}
-
-\section{Feature-Importance Results}
-\label{sec:res-fi}
 
 The interpretive results are where the analysis becomes most informative. When
 the three importance methods of Chapter~\ref{ch:featureimportance} are applied to

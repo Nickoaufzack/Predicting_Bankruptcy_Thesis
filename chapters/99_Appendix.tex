@@ -1,36 +1,80 @@
 \chapter{Appendix}
 \label{ch:appendix}
 
+\section{Hyperparameter Search Spaces}
+\label{sec:app-grids}
+
+Table~\ref{tab:grids} lists the parameters searched for each model in the nested
+grid search of Section~\ref{sec:cv}. The three grids contain $12$, $36$ and $12$
+combinations respectively, and since every combination is evaluated over the full
+$30$ cross-validation fits, the search amounts to $1{,}800$ model fits in total. The
+configurations that won this comparison are reported in Table~\ref{tab:selected}.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Hyperparameter search spaces per model.}
+  \label{tab:grids}
+  \begin{tabular}{lll}
+    \toprule
+    \textbf{Model} & \textbf{Parameter} & \textbf{Values searched} \\
+    \midrule
+    \multirow{2}{*}{Logistic Regression}
+      & \texttt{penalty}            & $\ell_1$, $\ell_2$ \\
+      & \texttt{C}                  & $0.001$, $0.01$, $0.1$, $1.0$, $10.0$, $100.0$ \\
+    \midrule
+    \multirow{4}{*}{Random Forest}
+      & \texttt{n\_estimators}      & $300$ (fixed) \\
+      & \texttt{max\_depth}         & $3$, $5$, $10$ \\
+      & \texttt{max\_features}      & \texttt{sqrt}, \texttt{log2}, $0.3$, $0.2$ \\
+      & \texttt{min\_samples\_leaf} & $3$, $5$, $10$ \\
+    \midrule
+    \multirow{5}{*}{Gradient Boosting}
+      & \texttt{n\_estimators}      & $200$ (fixed) \\
+      & \texttt{learning\_rate}     & $0.05$, $0.1$ \\
+      & \texttt{max\_depth}         & $1$, $2$, $3$ \\
+      & \texttt{min\_samples\_leaf} & $1$, $5$ \\
+      & \texttt{subsample}          & $0.8$ (fixed) \\
+    \bottomrule
+  \end{tabular}
+  \floatfoot{Source: own. Each combination is evaluated over the full $30$-fit
+    cross-validation.}
+\end{table}
+
 \section{Complexity and Overfitting Curves}
 \label{sec:app-complexity}
 
-The following figures trace training and validation $F_2$ as the principal
-complexity parameter of each model is swept, providing the overfitting check
-referenced in Section~\ref{sec:hyperparam}. The selected configurations of
-Table~\ref{tab:selected} sit at or before the point where the validation curve
-turns down. As noted in the main text, the depth axis is not comparable across
-the random forest and gradient boosting.
+The following figures provide the overfitting check referenced in
+Section~\ref{sec:cv}. For each model one complexity parameter is swept while all
+remaining parameters are held at their grid-search optimum, and training and
+validation $F_2$ are traced across that sweep. The selected configurations of
+Table~\ref{tab:selected} sit at or before the point where the validation curve turns
+down, which is what rules out overfitting at the chosen settings. As noted in
+Section~\ref{subsec:gb}, the depth axis is not comparable across the random forest
+and gradient boosting.
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.75\textwidth]{complexity_curve_LogisticRegression.png}
   \caption{Logistic regression: training vs.\ validation $F_2$ across the inverse
-    regularisation strength $C$.}
+    regularisation strength $C$, swept from $0.01$ to $100$ on a logarithmic axis.}
   \label{fig:cc-lr}
+  \floatfoot{Source: own.}
 \end{figure}
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.75\textwidth]{complexity_curve_RandomForest.png}
   \caption{Random forest: training vs.\ validation $F_2$ across
-    \texttt{max\_depth}.}
+    \texttt{max\_depth}, swept from $1$ to $20$.}
   \label{fig:cc-rf}
+  \floatfoot{Source: own.}
 \end{figure}
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.75\textwidth]{complexity_curve_GradientBoosting.png}
   \caption{Gradient boosting: training vs.\ validation $F_2$ across
-    \texttt{max\_depth}.}
+    \texttt{max\_depth}, swept from $1$ to $8$.}
   \label{fig:cc-gb}
+  \floatfoot{Source: own.}
 \end{figure}

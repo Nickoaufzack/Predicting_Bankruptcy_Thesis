@@ -1,128 +1,147 @@
 \chapter{Feature Importance}
 \label{ch:featureimportance}
 
-Having established how the models are trained and evaluated, this chapter turns
-to the interpretive question at the heart of the thesis: which financial features
-do the fitted models rely on? Three importance methods are applied to each of the
-three models --- native importance, permutation importance, and SHAP. They are
-introduced here as methods; their numerical results, and the divergence between
-them, are reported in Chapter~\ref{ch:results}.
+Having established how the models are trained and evaluated, this chapter turns to
+the interpretive question of the thesis, which financial features the fitted models
+actually rely on. Three importance methods are applied to each of the three models:
+native importance, permutation importance and SHAP. They are introduced here as
+methods, while their numerical results are reported in Chapter~\ref{ch:results}.
+These rankings describe what the models rely on to separate bankrupt from healthy
+firms, not the mechanisms that cause insolvency and are therefore to be read as
+associative rather than causal.
 
-One caveat frames everything that follows and is repeated deliberately. Feature
-importance is a statement about the model, not about the economy. It measures
-what a trained classifier uses to separate bankrupt from healthy firms; it does
-not identify the causal mechanisms that drive firms into insolvency. Without a
-design for causal identification, every ranking in this and the following chapter
-is to be read as \emph{associative} --- informative about predictive reliance,
-silent about cause. This distinction is not a rhetorical hedge but a genuine
-limit of the exercise, and it becomes especially important where the three
-methods disagree.
+The second problem raised in Chapter~\ref{ch:dataset} returns here, because it
+determines how the following rankings can be read. The redundancy among the $95$
+ratios is structural, as all of them are derived from the same balance sheet and
+income statement. \emph{Debt ratio \%} and \emph{Net worth/Assets} sum to exactly one
+for every firm in the sample and are therefore the same quantity written twice,
+while ROA(A), ROA(B) and ROA(C) differ only in the treatment of interest and
+depreciation and correlate between $0.94$ and $0.99$. Across 
+the whole feature set the correlation is nevertheless low, with a mean
+absolute Pearson coefficient of $0.08$ and a median of $0.02$, which is consistent
+with \textcite[5]{wangliu2021} and \textcite[7]{ansahnarh2024} reporting no substantial
+multicollinearity on this data. Both observations hold at once because correlation
+is measured pairwise. Of the $93$ continuous features, $31$ have at least one partner
+above $0.9$, but each of them is redundant with a median of two partners out of $92$
+and unrelated to the rest. These $28$ pairs are $0.65\%$ of all $4{,}278$ pairs, so
+their near-perfect values disappear into an average dominated by the remaining ones.
+A third of the features has a twin, and the global statistic still shows almost
+nothing.
+
+These features are kept rather than screened out, following \textcite{wangliu2021} in
+preserving the integrity of the data. The redundancy therefore reaches the
+interpretation stage intact and the three methods that follow each handle it
+differently. That is what makes the comparison informative and it is why the
+rankings in Chapter~\ref{ch:results} have to be read against one another rather than
+in isolation.
 
 \section{Native Importance}
 \label{sec:fi-native}
 
-Native importance reads the importance directly off the fitted model, and it
-therefore means something different for each model family. For the logistic
-regression, the natural measure is the vector of estimated coefficients from
-Equation~\eqref{eq:logit}. Because the features are normalised to a common scale,
-the magnitude of a coefficient reflects the strength of its influence on the
-predicted log-odds, and its sign reflects direction: a positive coefficient
-pushes a firm towards the bankruptcy class, a negative one away from it. Signed,
-directional importance is a distinctive strength of the linear model.
+Native importance reads the ranking directly off the fitted model and therefore
+differs by model family. For the logistic regression it is the vector of coefficients from
+Equation~\eqref{eq:lasso}. They carry a sign, and since the $\ell_1$ penalty has
+already dropped the redundant twin from each correlated group, each surviving
+coefficient stands on its own. This is the one model that reaches the interpretation stage with
+the redundancy already resolved.
 
-For the two tree ensembles, native importance is the Gini impurity importance:
-each feature is credited with the total reduction in node impurity it produces,
-summed over all splits and averaged over all trees. This measure is always
-non-negative and hence \emph{unsigned}; it records that a feature matters, not in
-which direction. It also carries a well-documented bias. \textcite{strobl2007}
-show that impurity importance systematically favours continuous and
-high-cardinality features, because such features offer more candidate split
-points and can therefore reduce impurity by chance more often than coarse or
-binary features. On a dataset of $95$ continuous ratios of differing granularity,
-this bias is a live concern, and it is one reason the analysis does not stop at
-native importance.
+For the two tree ensembles it is the Gini impurity importance of
+Section~\ref{sec:rf}, which is unsigned and carries two distortions. 
+\textcite{strobl2007} show that impurity importance leans towards features that take
+many different values, simply because they offer more points at which to split. With
+$93$ continuous ratios, that bias applies here directly. 
+Redundancy adds a second one. When two ratios are near-identical, a split can use
+only one of them at a time, meaning across the forest the credit is shared between the
+twins. The importance of what they jointly carry is split in two and each ends up
+looking less important than the pair really is. Neither distortion shows up in the
+ranking on its own, which is why the Gini importance is not read in isolation.
 
 \section{Permutation Importance}
 \label{sec:fi-permutation}
 
-Permutation importance takes a model-agnostic, performance-based view. The values
-of a single feature are randomly shuffled across observations, breaking its
-association with the target while leaving all other features intact, and the
-resulting drop in the $F_2$-score is recorded. A feature the model genuinely
-relies on will, when scrambled, cause a large deterioration; an irrelevant
-feature will cause none. To average out the randomness of the shuffle, the
-procedure is repeated ten times and the mean drop, together with its standard
-deviation, is reported. Because it is defined purely in terms of the loss, the
-method applies identically to all three models and thus provides a common
-comparison anchor.
+Permutation importance is model-agnostic and based on performance. After the models
+are fitted, it asks how much the performance drops if we ``disregard'' one feature.
+For one feature at a time, its values are shuffled across the firms, so that the
+feature keeps its overall distribution but no longer lines up with which firms went
+bankrupt. Everything else is left untouched and how far the $F_2$-score then drops
+is recorded.
 
-Its principal weakness is also well understood and is directly relevant here.
-When features are strongly correlated, permuting one of them barely hurts the
-model, because a correlated partner still carries almost the same information and
-substitutes for the scrambled feature. On the highly collinear Taiwanese ratios,
-this ``correlation masking'' can drive the measured importances towards
-implausibly small values, so that even features the model demonstrably uses
-appear unimportant. This behaviour is not a defect of the implementation but an
-intrinsic property of permutation under dependence, and it motivates a third
-method whose theoretical guarantees are stronger.
+A feature the model genuinely relies on causes a large drop when shuffled, while a
+feature it hardly uses would not move the score as much. Averaging this over ten repetitions then
+makes sure this does not come down to a single lucky or unlucky shuffle,
+following the same logic as cross-validation. And because the measure is defined
+purely through the loss of the same $F_2$ the models were selected on, it applies
+agnostically to all three and gives a common anchor for comparing them.
+
+Its weakness is the redundancy from before. When a feature has a near-identical
+twin, shuffling one of them changes little, because the twin still holds most of the
+same information. Even a feature the model relies on can then look
+unimportant. This is the counterpart to the impurity case where redundancy splits
+the credit between twins, here it hides it. It is not a flaw in the method but 
+rather a property of permutation under dependence and the reason why the three 
+methods are compared against eachother in
+Chapter~\ref{ch:results}.
 
 \section{SHAP}
 \label{sec:fi-shap}
 
-SHAP (SHapley Additive exPlanations) grounds feature importance in cooperative
-game theory and, unlike the previous two methods, comes with axiomatic
-guarantees \parencite{lundberg2017}. Its starting point is the idea of an
-\emph{explanation model}: a simple, interpretable surrogate that approximates the
-complex model locally. \textcite{lundberg2017} define the class of additive
-feature-attribution methods as those whose explanation model is a linear function
-of binary indicators,
+SHAP (SHapley Additive exPlanations) bases feature importance on game theory and
+differs from the previous two methods in the sense that it comes with axiomatic
+guarantees \parencite{lundberg2017}. The idea is to rebuild a single prediction from
+simple, additive pieces with a starting value plus one contribution for each feature.
+\textcite{lundberg2017} write this as
 \begin{equation}
-  g(z') = \phi_0 + \sum_{i=1}^{M} \phi_i z_i',
+  g(z') = \phi_0 + \sum_{i=1}^{95} \phi_i z_i',
   \label{eq:shap-additive}
 \end{equation}
-where $z' \in \{0,1\}^M$ indicates the presence or absence of each of the $M$
-simplified features, $\phi_0$ is the model output with no feature information,
-and each $\phi_i$ is the contribution attributed to feature $i$. The prediction
-is thus decomposed additively into a base value plus one term per feature.
+Here $g(z')$ is an explanation model, a replica that rebuilds the model's true
+prediction by adding different pieces together. The first is the base value $\phi_0$,
+an average prediction across all firms, before the model knows anything about the
+specific firm. The others are contributions $\phi_i$ of the individual features,
+added on top of that base. Each $\phi_i$ is the so-called Shapley value of feature $i$, through which we can see
+just how important each feature is by its actual numeric contribution to the model's
+prediction. Under the axioms behind SHAP these pieces return the true
+prediction of the model exactly, which is the additive guarantee the method is named
+for. The switch $z_i' \in \{0,1\}$ only states whether
+feature $i$ is included ($1$) or left out ($0$).
 
-The question is how to assign the attributions $\phi_i$. SHAP answers it with the
-Shapley value, the unique allocation from cooperative game theory that
-distributes the ``payout'' of a prediction fairly among the features. Treating
-the features as players in a game whose payoff is the model output, the
-contribution of feature $i$ is its marginal effect averaged over every coalition
-of the remaining features. Writing $F$ for the full set of features, a model
-$f_{S \cup \{i\}}$ trained with feature $i$ present is compared against a model
-$f_S$ trained without it, over all subsets $S \subseteq F \setminus \{i\}$:
+The question is then how to find each contribution $\phi_i$, the Shapley value of
+feature $i$. It is the one fair way, taken from cooperative game theory, to split the
+``payout'' of a prediction among the features, treating them as players that
+cooperate. A feature's contribution is how much it changes the prediction when it
+joins a group of the other features, or coalition, averaged over every possible
+group. Writing $F$ for the full set of features, the model with feature $i$ present,
+$f_{S \cup \{i\}}$, is compared with the model without it, $f_S$, across every group
+$S$ of the remaining features:
 \begin{equation}
   \phi_i = \sum_{S \subseteq F \setminus \{i\}}
   \frac{|S|!\,\bigl(|F| - |S| - 1\bigr)!}{|F|!}
   \left[\, f_{S \cup \{i\}}\!\left(x_{S \cup \{i\}}\right) - f_S\!\left(x_S\right) \right].
   \label{eq:shap-shapley}
 \end{equation}
-The combinatorial weight in Equation~\eqref{eq:shap-shapley} counts the
-orderings in which feature $i$ joins coalition $S$, so that $\phi_i$ is a weighted
-average of the feature's marginal contribution across all possible coalitions.
-This is what gives SHAP its fairness properties, but it is also what makes the
-exact computation intractable: the sum ranges over all subsets of the remaining
-features, of which there are $2^{|F|-1}$. With $95$ features this amounts to
-$2^{94}$ coalitions per feature --- a number far beyond any feasible computation.
+The fraction in front weights each group by how many orders feature $i$ could have
+joined it in, so that $\phi_i$ is a weighted average of what the feature adds across
+all groups. That averaging is what makes the split fair, but it is also what makes it
+impossible to compute directly. There is one group for every combination of the
+other features, $2^{|F|-1}$ of them, so with $95$ features this is $2^{94}$ groups per
+feature, far beyond anything that can be listed out.
 
-SHAP is therefore made practical by exploiting model structure to evaluate
-Equation~\eqref{eq:shap-shapley} exactly without enumerating the coalitions. For
-the logistic regression, a linear explainer computes the Shapley values in closed
-form from the coefficients and the feature distribution. For the two tree
-ensembles, a tree explainer traverses the trees to obtain the exact Shapley
-values in polynomial rather than exponential time. In both cases the values are
-computed for the bankruptcy class over all firms, and a feature's overall
-importance is summarised by the mean absolute SHAP value across firms.
+The way around this is to use the structure of each model to reach the same values
+without ever listing the groups. For the logistic regression, a linear explainer
+(LinearSHAP) reads the Shapley values directly from the coefficients. For the two
+tree ensembles, a tree explainer (TreeSHAP) walks through the trees and recovers the
+exact values in a tiny fraction of the time. In both cases the values are computed
+for the bankruptcy class across all firms, and a feature's overall importance is
+summarised by the mean absolute SHAP value across firms, reported in
+Chapter~\ref{ch:results}.
 
-Two properties make SHAP the interpretive centre of gravity for this thesis.
-First, it returns \emph{signed} attributions for \emph{all three} models: the
-logistic coefficients are signed but only linear, and the impurity importance is
-unsigned, whereas SHAP places every model on the same signed, additive axis and
-so makes their rankings directly comparable. Second, because it accounts for
-feature coalitions rather than perturbing features one at a time, it does not
-collapse under the correlation that so weakens permutation importance. Where the
-two performance-based views disagree, as they will in Chapter~\ref{ch:results},
-SHAP provides the more trustworthy reading, while permutation importance remains
-valuable precisely because its collapse diagnoses the collinearity of the data.
+Two properties make SHAP the interpretive centre of gravity for this thesis. First,
+it returns \emph{signed} attributions for \emph{all three} models: the logistic
+coefficients are signed but only linear, and the impurity importance is unsigned,
+whereas SHAP places every model on the same signed, additive axis and so makes their
+rankings directly comparable. Second, because it looks at whole groups of features
+rather than changing one feature at a time, it does not collapse under the
+correlation that so weakens permutation importance. Where the three methods disagree,
+as they will in Chapter~\ref{ch:results}, SHAP provides the most trustworthy reading,
+while permutation importance keeps its value precisely because its collapse diagnoses
+the redundancy of the data.

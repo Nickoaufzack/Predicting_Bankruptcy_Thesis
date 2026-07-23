@@ -1,0 +1,143 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Bachelorarbeit//Endspurt Juli 2026//DE
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Bachelorarbeit Endspurt
+
+BEGIN:VEVENT
+UID:ba-2026-07-21-a@thesis
+DTSTAMP:20260721T080000Z
+DTSTART:20260721T100000
+DTEND:20260721T130000
+SUMMARY:Pipeline + Performance Metrics
+DESCRIPTION:Cross-Validation-Section polieren\, dann Performance Metrics ueberarbeiten. Damit ist Methodology komplett abgeschlossen.
+END:VEVENT
+
+BEGIN:VEVENT
+UID:ba-2026-07-21-b@thesis
+DTSTAMP:20260721T080000Z
+DTSTART:20260721T140000
+DTEND:20260721T190000
+SUMMARY:Feature Importance I - Hauptaussagen\, Native\, Permutation
+DESCRIPTION:Hauptaussagen-Runde abstimmen\, dann Kapitel-Intro mit Kausalitaets-Caveat\, Native Importance und Permutation Importance.
+END:VEVENT
+
+BEGIN:VEVENT
+UID:ba-2026-07-22-a@thesis
+DTSTAMP:20260721T080000Z
+DTSTART:20260722T160000
+DTEND:20260722T190000
+SUMMARY:Feature Importance II - SHAP-Block
+DESCRIPTION:Additive-Attribution-Formel und klassische Shapley-Formel\, 2^94-Argument\, Linear- und TreeSHAP.
+END:VEVENT
+
+BEGIN:VEVENT
+UID:ba-2026-07-22-b@thesis
+DTSTAMP:20260721T080000Z
+DTSTART:20260722T193000
+DTEND:20260722T220000
+SUMMARY:Feature Importance III - Pro/Contra-Faden
+DESCRIPTION:Permutation vs. SHAP\, erst allgemein\, dann auf die korrelierten Ratios bezogen. Multikollinearitaets-Bogen aus Dataset einloesen.
+END:VEVENT
+
+BEGIN:VEVENT
+UID:ba-2026-07-23-a@thesis
+DTSTAMP:20260721T080000Z
+DTSTART:20260723T090000
+DTEND:20260723T130000
+SUMMARY:Experimental Results
+DESCRIPTION:Modell-Scores und FI-Ergebnisse\, die Divergenz ins Zentrum. Kaputte Referenz sec:hyperparam fixen\, ROC/PR-Platzhalter entscheiden.
+END:VEVENT
+
+BEGIN:VEVENT
+UID:ba-2026-07-23-b@thesis
+DTSTAMP:20260721T080000Z
+DTSTART:20260723T140000
+DTEND:20260723T183000
+SUMMARY:Discussion
+DESCRIPTION:Interpretation der Divergenz\, oekonomische Lesart unter Assoziations-Caveat\, Undersampling-Varianz-Kritik aus dem Gabriel-Meeting\, Limitations.
+END:VEVENT
+
+BEGIN:VEVENT
+UID:ba-2026-07-23-c@thesis
+DTSTAMP:20260721T080000Z
+DTSTART:20260723T193000
+DTEND:20260723T210000
+SUMMARY:Conclusion (optional vorziehen)
+DESCRIPTION:Nur wenn Results und Discussion gut durchgelaufen sind. Entlastet den Freitag deutlich.
+END:VEVENT
+
+BEGIN:VEVENT
+UID:ba-2026-07-24-a@thesis
+DTSTAMP:20260721T080000Z
+DTSTART:20260724T090000
+DTEND:20260724T120000
+SUMMARY:Introduction inkl. Abstract
+DESCRIPTION:Abstract einfalten\, veraltete Verweise auf die Hyperparameter-Section korrigieren\, SMOTE-Formulierung entschaerfen.
+END:VEVENT
+
+BEGIN:VEVENT
+UID:ba-2026-07-24-b@thesis
+DTSTAMP:20260721T080000Z
+DTSTART:20260724T130000
+DTEND:20260724T160000
+SUMMARY:Literature Review
+DESCRIPTION:Abgrenzung schaerfen\, jetzt wo der ganze Bogen steht.
+END:VEVENT
+
+BEGIN:VEVENT
+UID:ba-2026-07-24-c@thesis
+DTSTAMP:20260721T080000Z
+DTSTART:20260724T160000
+DTEND:20260724T173000
+SUMMARY:Conclusion (Fallback)
+DESCRIPTION:Nur falls Donnerstagabend nicht geschafft.
+END:VEVENT
+
+BEGIN:VEVENT
+UID:ba-2026-07-24-d@thesis
+DTSTAMP:20260721T080000Z
+DTSTART:20260724T173000
+DTEND:20260724T190000
+SUMMARY:Querschnitt - Referenzen\, Figure-Quellen\, ROC
+DESCRIPTION:Kaputte Refs\, Source-Angaben an alle Figures und Tables\, ROC/PR-Platzhalter final klaeren.
+END:VEVENT
+
+BEGIN:VEVENT
+UID:ba-2026-07-26-a@thesis
+DTSTAMP:20260721T080000Z
+DTSTART:20260726T160000
+DTEND:20260726T190000
+SUMMARY:Puffer (nur falls noetig)
+DESCRIPTION:Reserve\, falls Freitag gerutscht ist. Sonst faellt der Block aus.
+END:VEVENT
+
+BEGIN:VEVENT
+UID:ba-2026-07-27-a@thesis
+DTSTAMP:20260721T080000Z
+DTSTART:20260727T090000
+DTEND:20260727T130000
+SUMMARY:Gesamtdurchgang + Peer Review rausschicken
+DESCRIPTION:Von vorne bis hinten lesen\, Storyline-Konsistenz und Seitenzahl pruefen\, dann zum Peer Review verschicken.
+END:VEVENT
+
+BEGIN:VEVENT
+UID:ba-2026-07-30-a@thesis
+DTSTAMP:20260721T080000Z
+DTSTART:20260730T090000
+DTEND:20260730T170000
+SUMMARY:Peer-Feedback einarbeiten
+DESCRIPTION:Rueckmeldungen einarbeiten\, letzte Kuerzungen Richtung 20 Seiten.
+END:VEVENT
+
+BEGIN:VEVENT
+UID:ba-2026-07-31-a@thesis
+DTSTAMP:20260721T080000Z
+DTSTART:20260731T090000
+DTEND:20260731T130000
+SUMMARY:Finaler Check + Abgabe
+DESCRIPTION:Letzter Durchgang\, dann Upload ins Koinon-Portal und dieselbe Version per Mail an Gabriel inkl. Code.
+END:VEVENT
+
+END:VCALENDAR

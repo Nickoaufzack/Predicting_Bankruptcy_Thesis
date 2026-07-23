@@ -23,9 +23,8 @@ of either 0 = healthy or 1 = bankrupt.
     Total         & $6{,}819$ & $100.00\%$ \\
     \bottomrule
   \end{tabular}
-  \floatfoot{Binary target; $95$ financial features per observation.}
+  \floatfoot{Source: \textcite{uci_taiwan}.}
 \end{table}
-
 Given this setup, two problems arise that shape the entire analysis. First one being the obvious severe class imbalance 
 already visible in Table~\ref{tab:dataset}. By the nature of the problem, bankruptcies are rare events, here making up only 3.23\% 
 of all observations. A naive classifier trained on the full data could reach very high accuracies just by labeling almost every company as 
