@@ -7,11 +7,9 @@ to interpretation. On the first question, a clean undersampling pipeline built o
 cluster-centroid sampling and evaluated by the $F_2$-score achieves a best
 cross-validated score of $0.550$ for gradient boosting, ahead of the random
 forest and well ahead of the logistic-regression baseline, and competitive with
-the undersampling benchmark of \textcite{wangliu2021} while training exclusively
 on real firms. On the second, and more central question, comparing native,
 permutation, and SHAP importance across the three models reveals a systematic
 divergence: native impurity importance is distorted by the bias of
-\textcite{strobl2007}, permutation importance collapses under the collinearity of
 the $95$ ratios, and SHAP --- the only method that yields signed, comparable
 attributions for every model --- supplies the most trustworthy ranking, in which
 leverage and debt-servicing measures dominate.

@@ -40,10 +40,10 @@ in isolation.
 
 Native importance reads the ranking directly off the fitted model and therefore
 differs by model family. For the logistic regression it is the vector of coefficients from
-Equation~\eqref{eq:lasso}. They carry a sign, and since the $\ell_1$ penalty has
-already dropped the redundant twin from each correlated group, each surviving
-coefficient stands on its own. This is the one model that reaches the interpretation stage with
-the redundancy already resolved.
+Equation~\eqref{eq:lasso}. They carry a sign, and since the $\ell_1$ penalty has already thinned the redundant
+twins in each correlated group, most surviving coefficients stand on their own. This
+is the one model that reaches the interpretation stage with the redundancy largely
+resolved.
 
 For the two tree ensembles it is the Gini impurity importance of
 Section~\ref{sec:rf}, which is unsigned and carries two distortions. 
