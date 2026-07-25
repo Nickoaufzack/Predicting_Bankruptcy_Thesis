@@ -385,11 +385,11 @@ $\beta = 2$ on this very dataset for the same reason, ``to minimize false
 negatives'', which in addition preserves comparability with the benchmark this
 thesis extends.
 
-Accuracy and the area under the ROC curve are reported as secondary figures but were
-never used for model selection. The accuracy trap was already visible in
-Chapter~\ref{ch:dataset}, where a classifier labelling every firm healthy would
-score above $96\%$ without ever identifying the cases of interest, and the ROC
-curve, which weights both classes symmetrically, likewise shows an over-optimistic
+The ROC-AUC is reported as a secondary figure but was never used for model
+selection, and accuracy is not reported at all. The accuracy trap was already
+visible in Chapter~\ref{ch:dataset}, where a classifier labelling every firm healthy
+would score above $96\%$ without ever identifying the cases of interest, and the
+ROC-AUC, which weights both classes symmetrically, likewise gives an over-optimistic
 picture under strong imbalance. The $F_2$-score is therefore the quantity that the
 grid search of Section~\ref{sec:cv} maximises and the metric on which all decisions
 are based.

@@ -248,7 +248,9 @@ This paper was not previously presented to another examination board and has not
 
 \SetBlockThreshold{0}
 
-\parindent=1.27cm
+% Block paragraphs: no first-line indent. \parskip (15pt) already separates
+% paragraphs, so an additional indent would be a redundant second marker.
+\parindent=0pt
 \newcommand{\periodafter}[1]{#1.~~}
 \titleclass{\chapter}{straight}
 \titleformat{\chapter}{\normalfont\normalsize\bfseries\centering}{\thechapter}{1em}{}

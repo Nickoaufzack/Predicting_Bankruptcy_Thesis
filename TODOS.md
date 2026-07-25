@@ -87,6 +87,16 @@ Backlog (eigene Runde am Ende, kein Fokus während der Schreibphase).
   Stacking Classifier, aber auf **SMOTE-balancierten** Daten + **PCA**; Top-Feature
   „Net Income to Total Assets". Kontrast zu uns: wir SHAP auf **echten,
   undersampled, vollen** Features. Gute Gegenüberstellung fürs FI/Discussion.
+  OFFEN: erwähnen wir Sinap schon im **FI-Intro** (als „auch andere machen SHAP,
+  aber anders gesampled/selektiert") und greifen es dann in **Results/Discussion**
+  konkret auf (Top-Feature-Vergleich)? Reihenfolge FI → Results → Discussion klären.
+
+- [ ] **FI-Intro: Contribution ggü. Wang & Liu explizit machen** — im Einstieg des
+  Feature-Importance-Kapitels kurz sagen, dass die FI-Ebene *der* Beitrag ist:
+  Wang & Liu (2021) haben Sampling, CV und F2 auf denselben Daten schon ähnlich
+  gemacht, aber **keine Feature Importance / keine ökonomische Interpretation** —
+  wir setzen genau diese Ebene oben drauf. Ein, zwei Sätze, nicht mehr; verbindet
+  das Kapitel mit der Storyline aus Intro/Lit Review.
 
 - [ ] **Undersampling-Kosten → Discussion** — der (auskommentierte) Absatz in §4.2:
   Undersampling verwirft Mehrheitsdaten (Info-Verlust, kleineres Trainingsset).
@@ -117,6 +127,19 @@ Backlog (eigene Runde am Ende, kein Fokus während der Schreibphase).
   Nachfrage („liegt dein Optimum am Rand?"). Antwort steht schon im Appendix: die
   Complexity-Kurve sweept bis 20 und zeigt, dass darüber nichts gewonnen wird.
   Nicht zwingend in den Text, aber für die Verteidigung parat haben.
+
+- [ ] **Discussion: zwei offene FI-Fragen (NICHT in Results behaupten)** — beim
+  RF-Absatz aufgekommen, bewusst nur als Befund gemeldet, Deutung in Discussion:
+  *(a)* SHAP überstimmt Gini bei GB (→ Borrowing dependency), stimmt bei RF aber mit
+  Gini überein (beide Persistent EPS). Warum? NUR als offene Hypothese, führender
+  Kandidat ist die **Baumtiefe** (RF max_depth=10 vs. GB=2), NICHT „Bias- vs.
+  Varianz-Reduktion" (das wäre n=2, confounded, kein Ground Truth → würde uns
+  reinreiten). Als spekulativ und unbelegt markieren.
+  *(b)* Borrowing-dependency-Kritik: RF (F2 0,546, fast so gut wie GB 0,550) rankt
+  Borrowing dependency nur auf #2, nicht #1. Wäre es der robuste Treiber, sollte das
+  fast gleich gute RF es auch nach oben spülen. Also ist „Borrowing dependency = DIE
+  Antwort" **modellabhängig**, keine robuste ökonomische Wahrheit → ehrliche
+  Einschränkung, macht die Story glaubwürdiger statt schwächer.
 
 ## Aus letztem Meeting mit Gabriel (17.07.2026)
 
