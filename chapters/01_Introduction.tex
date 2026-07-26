@@ -1,37 +1,44 @@
 \chapter{Introduction}
 \label{ch:introduction}
 
-Corporate insolvencies are rising worldwide for the fifth consecutive year.
-\textcite{allianztrade2025} expect a further increase of $5\%$ in 2026, taking
-global business failures to a record level about a quarter above where they stood
-before the pandemic and putting an estimated $2.1$ million jobs at risk. Behind
-each of these failures stand creditors, employees, suppliers and banks who carry
-the cost, which is why predicting bankruptcy early enough to react has been a
-research question for decades. Machine learning has pushed this field to
-remarkable reported numbers, with recent studies reaching accuracies of $98$--$99\%$
-\parencite{pham2025, suresh2025, sinap2025}. Two things are troubling about these
-results. First, they rest on synthetic oversampling, which balances the data by
-fabricating bankruptcy events that never occurred. Second, they are produced by
-models whose decisions remain largely unexplained, so even a correct prediction
-gives an analyst little to work with.
+Corporate insolvencies are rising worldwide for the fifth consecutive year, with
+\textcite{allianztrade2026} expecting a further increase of $6\%$ in 2026 and
+$2.2$ million jobs directly at risk in the failing firms alone. For the firms themselves, creditors,
+suppliers, insurers and banks, identifying the risk of failure early is a
+fundamental question of risk assessment and it matters even more in times like
+these. The most accessible signal for that purpose is what a firm reports about
+itself, its financial statements. Ratios describing profitability, liquidity
+and debt condense a firm's condition into comparable numbers, which makes them
+a natural input for prediction models. Machine learning can pick up patterns in
+these ratios that classical methods miss, but it faces one structural problem.
+Bankruptcies are rare, and models trained on such imbalanced data tend to
+overlook the very cases they are supposed to find. Much of the recent
+literature answers this by balancing the dataset through synthetic bankruptcy 
+cases and by relying on complex models whose decisions remain largely unexplained.
 
-This thesis takes the opposite route on both points. Using a widely studied
+This thesis takes a different route on both points. Using a widely studied
 dataset of $6{,}819$ Taiwanese firms, of which only $3.2\%$ went bankrupt, it
 trains exclusively on real observations. The imbalance is handled by
 ClusterCentroids undersampling, which condenses the healthy majority into
-representative real firms instead of inventing bankrupt ones. Three models of
-increasing complexity, a logistic regression, a random forest and gradient
-boosting, are compared under repeated stratified cross-validation and selected on
-the $F_2$-score, because missing a bankruptcy costs far more than a false alarm.
-The setup extends \textcite{wangliu2021}, who established this sampling and
-evaluation framework on the same data but stopped at predictive performance.
+representative real firms instead of generating synthetic bankrupt ones. Three
+models of increasing complexity, a logistic regression, a random forest and
+gradient boosting, are compared under repeated stratified cross-validation and
+selected on the $F_2$-score, because missing a bankruptcy costs far more than a
+false alarm. The setup extends \textcite{wangliu2021}, who established this
+sampling and evaluation framework on the same data but stopped at predictive
+performance. The goal is to build an approach that is based on but not necessarily 
+tied to this particular dataset and could therefore be transferred to any similarly 
+imbalanced prediction problem.
 
-The added layer is the actual contribution and leads to the research question of
-this thesis, which financial features the fitted models rely on and how far the
-answer depends on how one asks. Three importance methods, native importance,
-permutation importance and SHAP, are applied to all three models. The short answer
-is that no single ranking exists, as the methods diverge in ways their known
-weaknesses predict, while a consistent signal remains, with every model placing a
-measure of debt dependence at or near the top. Chapters~2 and~3 review the
-literature and the data, Chapters~4 and~5 develop the methodology and the
-importance methods and Chapters~6 to~8 report, discuss and conclude.
+An additional contribution builds on top of this framework and asks a second
+question, which financial features the fitted models rely on and how far the
+answer depends on how one asks. Three feature importance methods, native importance, 
+permutation importance and SHAP, are applied to all three models. The short 
+answer is that no single ranking exists, as the methods
+diverge in ways their known weaknesses predict, while a consistent signal
+remains, with every model placing a measure of debt dependence at or near the
+top. The insight therefore lies not in one definitive ranking but in the comparison
+itself, which shows how each answer is shaped by the model and the method
+behind it. Chapters~2 and~3 review the literature and the data, Chapters~4 and~5
+develop the methodology and the importance methods and Chapters~6 to~8 report,
+discuss and conclude.
