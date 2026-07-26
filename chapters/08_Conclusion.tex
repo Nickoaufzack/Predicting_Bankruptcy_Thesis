@@ -1,34 +1,30 @@
 \chapter{Conclusion}
 \label{ch:conclusion}
 
-This thesis set out to predict corporate bankruptcy on the Taiwanese dataset
-using a pipeline that admits no synthetic data, and to open the resulting models
-to interpretation. On the first question, a clean undersampling pipeline built on
-cluster-centroid sampling and evaluated by the $F_2$-score achieves a best
-cross-validated score of $0.550$ for gradient boosting, ahead of the random
-forest and well ahead of the logistic-regression baseline, and competitive with
-on real firms. On the second, and more central question, comparing native,
-permutation, and SHAP importance across the three models reveals a systematic
-divergence: native impurity importance is distorted by the bias of
-the $95$ ratios, and SHAP --- the only method that yields signed, comparable
-attributions for every model --- supplies the most trustworthy ranking, in which
-leverage and debt-servicing measures dominate.
+This thesis set out to predict bankruptcy on the Taiwanese dataset without
+synthetic data and to open the resulting models to interpretation. Trained
+exclusively on real firms through ClusterCentroids undersampling, evaluated with
+repeated stratified cross-validation and selected on the $F_2$-score, gradient
+boosting reached $0.550$ and the random forest $0.546$, both clearly ahead of the
+logistic regression at $0.482$ and above the best comparable result of
+\textcite{wangliu2021} at $0.423$, under a setup that differs in the undersampling
+algorithm and the model family, so the numbers indicate rather than prove an
+improvement.
 
-The methodological contribution is the pairing of a scientifically honest
-sampling design with an explicit, multi-method interpretability analysis. Rather
-than reporting a single importance list, the thesis treats the disagreement
-between methods as its object of study and shows that this disagreement is
-predictable from the known properties of each method and from the structure of
-the data. For the practitioner, the message carries a modest policy relevance:
-an early-warning model can be built on real data alone, without fabricating
-distress events, and its outputs can be interrogated for the financial signals
-that drive them --- provided those signals are read as predictive associations
-and not as causes on which intervention could naively be based.
+The main contribution lies one layer deeper. Where \textcite{wangliu2021} stop at
+predictive performance, this thesis adds a feature-importance layer and compares
+three methods across three models. The comparison shows that there is no single
+answer to which financial ratios matter. Each method departs from the others in
+the direction its known weakness predicts, as impurity importance splits credit
+between redundant features, permutation hides features with close substitutes and
+SHAP shares credit while keeping it readable. A ranking is therefore a joint
+product of the data, the model and the method, and any study reporting one list
+without this context claims more than the tools can carry. Within these limits the
+economic signal is consistent, as every model places a leverage measure at or near
+the top, read throughout as association rather than cause.
 
-Two extensions suggest themselves. Replicating the analysis on a second dataset
-from another market would test whether both the performance and the importance
-rankings transfer, or whether they are specific to the Taiwanese sample. And a
-deeper economic treatment --- ideally one that moves from association towards a
-design capable of causal statements --- would let the leverage-centred picture
-recovered here be assessed as more than a description of what the models happen to
-use. Both lie beyond the present scope but follow naturally from its results.
+Two extensions follow naturally. Validating the rankings on a second dataset from
+a different market and period would show which parts of the pattern travel beyond
+Taiwan. And connecting the surviving features to economic theory in more depth,
+ideally with a design that supports causal statements, would turn what this thesis
+carefully reports as association into tested explanation.

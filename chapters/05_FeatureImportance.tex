@@ -18,8 +18,8 @@ for every firm in the sample and are therefore the same quantity written twice,
 while ROA(A), ROA(B) and ROA(C) differ only in the treatment of interest and
 depreciation and correlate between $0.94$ and $0.99$. Across 
 the whole feature set the correlation is nevertheless low, with a mean
-absolute Pearson coefficient of $0.08$ and a median of $0.02$, which is consistent
-with \textcite[5]{wangliu2021} and \textcite[7]{ansahnarh2024} reporting no substantial
+absolute Pearson coefficient (measure of correlation) of $0.08$ and a median of $0.02$, which is consistent
+with \textcite[5]{wangliu2021} and \textcite[7]{ansahnarh2024}, who report no substantial
 multicollinearity on this data. Both observations hold at once because correlation
 is measured pairwise. Of the $93$ continuous features, $31$ have at least one partner
 above $0.9$, but each of them is redundant with a median of two partners out of $92$
@@ -74,7 +74,7 @@ purely through the loss of the same $F_2$ the models were selected on, it applie
 agnostically to all three and gives a common anchor for comparing them.
 
 Its weakness is the redundancy from before. When a feature has a near-identical
-twin, shuffling one of them changes little, because the twin still holds most of the
+twin, shuffling one of them tends to change little, because the twin still holds most of the
 same information. Even a feature the model relies on can then look
 unimportant. This is the counterpart to the impurity case where redundancy splits
 the credit between twins, here it hides it. It is not a flaw in the method but 
@@ -159,6 +159,6 @@ immune to that redundancy, with near-identical twins it shares their joint
 contribution between them, so a redundant pair is spread across two smaller entries.
 But unlike impurity, which splits the credit arbitrarily, or permutation, which
 hides it, SHAP keeps both the total and the sign, so the pair stays readable. This is
-why SHAP gives the most trustworthy reading, but is still compared against the other
+why SHAP gives the most complete reading, but is still compared against the other
 two rather than trusted alone in the following Chapter. It is the pattern across 
 them, not any single method, that carries the insight.

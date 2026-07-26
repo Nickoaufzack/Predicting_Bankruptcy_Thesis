@@ -1,4 +1,4 @@
-6\chapter{Methodology}
+\chapter{Methodology}
 \label{ch:methodology}
 
 This chapter builds the methodological backbone of the thesis, while tackling the first forementioned problem of class imbalance. 
@@ -7,7 +7,7 @@ theory to build the prediction model. While others handle the correlation throug
 (\textcite{pham2025}, \textcite{chaudhary2023}), this thesis takes a different approach by working with all the data to 
 "preserve the integrity" (\textcite[5]{wangliu2021}) and address the redundancy from high correlation in the contribution of 
 this thesis in Chapter~\ref{ch:featureimportance}. The guiding idea is a pipeline that is reproducible at every step, follows 
-established best practices, and trains only on real, historically observed firms rather than synthetic samples. 
+established best practices and trains only on real, historically observed firms rather than synthetic samples. 
 The pipeline rests on six core components: data preprocessing, undersampling and the prediction models, which are all 
 wrapped inside a cross-validation loop that, through an embedded hyperparameter search, gives us different performance metrics.
 
@@ -27,7 +27,7 @@ values a given feature takes across all firms, every value $x \in F$ is mapped t
 \end{equation}
 where $\min(F)$ and $\max(F)$ are the smallest and largest values of that
 feature. We follow this normalisation used by the dataset's originators
-\parencite[562--563]{liang2016} and by \textcite[5]{wangliu2021}, and implement
+\parencite[562--563]{liang2016} and by \textcite[5]{wangliu2021} and implement
 it with scikit-learn's \texttt{MinMaxScaler}. % Two features, the
 % \emph{Liability-Assets Flag} and the \emph{Net Income Flag}, are already binary
 % $0/1$ indicators rather than continuous ratios and are passed through unchanged.
@@ -79,11 +79,11 @@ For this reason, this thesis undersamples exclusively and follows
 the framework of \textcite{wangliu2021}, using \emph{ClusterCentroids} to do so.
 
 
-\emph{ClusterCentroids} builds on $K$-means clustering \parencite[Ch.~12.4.1]{islp2023}.
+\emph{ClusterCentroids} builds on $K$-means clustering \parencite{islp2023}.
 The idea is to shrink the majority class to $K$ most representative firms and train
-the model on those. Following Algorithm~12.2 of \textcite[523]{islp2023}, each firm
-is first assigned at random to one of $K$ clusters, which serves as the starting
-point. The algorithm then repeats two steps until the assignments no longer change:
+the model on those. Following Algorithm~12.2 of \textcite[523]{islp2023}, in the first Step each firm
+is assigned at random to one of $K$ clusters, which serves as the starting
+point. The algorithm then repeats Step 2 until the assignments no longer change:
 (a) for each cluster it computes the centroid, the mean of all firms currently
 assigned to it, and (b) it reassigns each firm to the cluster whose centroid is
 closest in Euclidean distance. Figure~\ref{fig:kmeans} illustrates this procedure.
@@ -92,9 +92,7 @@ closest in Euclidean distance. Figure~\ref{fig:kmeans} illustrates this procedur
   \centering
   \includegraphics[width=\textwidth]{kmeans_islp.png}
   \caption{$K$-means clustering on illustrative synthetic
-    two-dimensional data with $K=3$. Step 1: randomly assign each observation to a cluster; 
-    Step 2:(a) compute the centroid for each cluster; (b) reassign each observation to the closest cluster.
-    The actual procedure condenses $5{,}939$ healthy firms into $660$
+    two-dimensional data with $K=3$. The actual procedure condenses $5{,}939$ healthy firms into $660$
     representatives inside the Cross-validation pipepline.}
   \label{fig:kmeans}
   \floatfoot{Source: \textcite{islp2023}.}
@@ -185,7 +183,7 @@ methods in Chapter~\ref{ch:featureimportance} agree most cleanly for this model.
 \label{sec:rf}
 
 The random forest removes the linear restriction of the previous model by building
-on decision trees. A tree splits the data step by step at thresholds on single
+on decision trees. A decision tree splits the data step by step at thresholds on single
 ratios like ``Debt ratio $> x$'' for example and can in this way capture the
 interactions between ratios that a linear model cannot. A
 single decision tree is low in bias but high in variance, meaning it learns a
@@ -196,7 +194,7 @@ Averaging over many trees cancels much of the variance of any individual tree. I
 what gives the classifier its name, at each split, only a random subset of the features is
 considered, which decorrelates the trees so that the averaging actually pays off. On $95$ partly
 redundant ratios this decorrelation is what keeps the forest from building a
-set of near-identical trees and the size of that subset (\texttt{max\_features})
+set of almost identical trees and the size of that subset (\texttt{max\_features})
 is correspondingly one of its main tuning parameters \parencite{probst2019}.
 
 What holds the construction together is the rule by which each split is chosen. At
@@ -215,23 +213,23 @@ yields large impurity reductions. Summed over all splits and trees this is also 
 the forest reports as its native feature importance. Unlike the signed coefficients
 of the logistic regression it only records that a ratio matters, not in which
 direction. That leaves the interpretation open and is one reason
-for the comparison in Chapter~\ref{ch:featureimportance}.
+for the comparison in Chapter~\ref{ch:featureimportance}. %letzten zwei sätze raus?
 
 In bias--variance terms this places the random forest on the other side of the
 logistic regression. Where the linear baseline was stable but seemingly too simple to capture
 the true relationship, the deep trees of the forest are flexible enough to have low
-bias and the bootstrapping and decorrelation strip away much of the instability. 
+bias and the bootstrapping and decorrelation try to tackle the instability. 
 The forest therefore lowers variance while keeping bias low.
 
 \subsection{Gradient Boosting}
 \label{subsec:gb}
 
 Gradient boosting uses the same building block of decision trees as the random forest,
-but combines them in the opposite way. Where the random forest grows many
+but combines them in a different way. Where the random forest grows many
 deep trees independently and averages them to cut variance, gradient boosting grows
 flat trees sequentially, each one correcting the errors of its predecessors 
 and in this way targets bias \parencite{friedman2001}. The two therefore
-attack the error from opposite sides, which is precisely why both are included
+attack the error from opposite sides, which is why both are included
 alongside the linear baseline.
 
 The model is built up in stages. It starts from a simple initial prediction $F_0$
@@ -250,16 +248,16 @@ bankrupt ones it currently scores too low and $\nu$ decides how much of that
 correction is actually applied.
 
 The name gradient boosting comes from these residuals. In mathematical terms the
-expression $y - F_{m-1}(x)$ is the negative gradient of the squared-error loss, and
+expression $y - F_{m-1}(x)$ is the negative gradient of the squared-error loss and
 fitting each tree to it is what gives the method its name. The classification loss
 used here follows the same principle.
 
 A single flat tree has high bias and low variance and the sequence of corrections
 lowers that bias step by step. The risk is that the process keeps correcting until
 it starts fitting noise, which is where overfitting would set in. Two settings of the
-\texttt{scikit-learn} implementation used in the pipeline hold it back: each tree is
+\texttt{scikit-learn} implementation used in the pipeline hold it back. Each tree is
 kept flat through a small \texttt{max\_depth}, which here means something different
-than in the random forest, where the trees are instead grown deep and the
+than in the random forest, where the trees are instead grown deep. The other is that the
 contribution of every tree is scaled down by the \texttt{learning\_rate} $\nu$, so
 that bias is reduced gradually over many small steps rather than a few aggressive
 ones.
@@ -321,14 +319,9 @@ estimate of performance on unseen firms rather than an artefact of the resamplin
 
 The same loop also selects each model's hyperparameters through a nested grid search
 inside the cross-validation. Every candidate configuration is put through the full
-evaluation and scored by its fold-averaged $F_2$, which is how the $\ell_1$ penalty
-of the logistic regression, the \texttt{max\_features} of the random forest and the
-depth and learning rate of gradient boosting are chosen. The searched grids and the
-complexity curves confirming that the selected configurations do not overfit are
-collected in Appendix~\ref{ch:appendix}. Finally, the whole ten-fold split is repeated three times, each time with
+evaluation and scored by its fold-averaged $F_2$, which will be show in Chapter \ref{ch:results}. Finally, the whole ten-fold split is repeated three times, each time with
 a different randomization of the firms, which gives $30$ independent train/test
-evaluations per model. The mean and standard deviation reported in
-Chapter~\ref{ch:results} therefore no longer depend on any single split of the data.
+evaluations per model. The mean and standard deviation reported therefore no longer depend on any single split of the data.
 
 \section{Performance Metrics}
 \label{sec:metrics}
@@ -365,7 +358,7 @@ From these counts, precision and recall are defined as
   \label{eq:precrec}
 \end{equation}
 where precision is the share of firms flagged as bankrupt that actually went
-bankrupt, and recall is the share of actually bankrupt firms that the model flagged. 
+bankrupt and recall is the share of actually bankrupt firms that the model flagged. 
 The two are combined by the $F_\beta$-score, a weighted harmonic mean,
 \begin{equation}
   F_\beta = (1 + \beta^2)\,
@@ -376,19 +369,19 @@ The two are combined by the $F_\beta$-score, a weighted harmonic mean,
 which reduces to the familiar $F_1$ for $\beta = 1$. This thesis adopts $\beta = 2$
 as the primary metric, which weights recall four times as heavily as precision. The
 reason is the economic asymmetry of the problem. Failing to flag a firm that
-subsequently goes bankrupt is far more costly than a false alarm that triggers
+goes bankrupt is far more costly than a false alarm that triggers
 closer inspection of a healthy firm, a point that \textcite[117]{veganzones2018}
 formalise through the expected cost of misclassification and that
 \textcite[15]{ansahnarh2024} make directly when they note that missing a truly
 bankrupt company calls for models with high recall. \textcite[8]{wangliu2021} set
 $\beta = 2$ on this very dataset for the same reason, ``to minimize false
-negatives'', which in addition preserves comparability with the benchmark this
+negatives'', which in addition preserves comparability with the Framework benchmark this
 thesis extends.
 
 The ROC-AUC is reported as a secondary figure but was never used for model
-selection, and accuracy is not reported at all. The accuracy trap was already
+selection and accuracy is not reported at all. The accuracy trap was already
 visible in Chapter~\ref{ch:dataset}, where a classifier labelling every firm healthy
-would score above $96\%$ without ever identifying the cases of interest, and the
+would score above $96\%$ without ever identifying the cases of interest and the
 ROC-AUC, which weights both classes symmetrically, likewise gives an over-optimistic
 picture under strong imbalance. The $F_2$-score is therefore the quantity that the
 grid search of Section~\ref{sec:cv} maximises and the metric on which all decisions

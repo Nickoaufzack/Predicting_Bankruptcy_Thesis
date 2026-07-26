@@ -141,6 +141,34 @@ Backlog (eigene Runde am Ende, kein Fokus während der Schreibphase).
   Antwort" **modellabhängig**, keine robuste ökonomische Wahrheit → ehrliche
   Einschränkung, macht die Story glaubwürdiger statt schwächer.
 
+- [ ] **Discussion: neue Punkte aus der Results-Runde (25.07.2026)** — alle
+  verifiziert gegen Final Code Output bzw. data.csv:
+  *(a) Splits/hides/shares als roter Faden* — Kapitel 5 macht drei Vorhersagen,
+  Results zeigt hides (EPS verschwindet aus Permutation bei RF UND GB) und shares
+  (ROA-Familie bleibt unter SHAP lesbar, GB: ROA(B) 0.217 + ROA(C) 0.127 zusammen
+  ≈ Borrowing dep. 0.356). Der *splits*-Beleg wurde bewusst aus Results
+  rausgehalten und gehört hierher: RF-Gini rankt die EPS-Familie auf 1/3/4
+  (0.092 + 0.059 + 0.053 = 0.204, ein Fünftel der Gesamtwichtigkeit auf drei
+  Beinahe-Zwillinge verteilt).
+  *(b) Isolations-Befund (CSV-verifiziert, stärkster Einzelbeleg)* — die
+  RF-Permutation-Gewinner sind die isoliertesten Features des Datensatzes:
+  Interest Expense Ratio max|r| = 0.035, DFL 0.037, Interest Coverage 0.034,
+  No-credit Interval 0.054. Die verschwindende EPS-Familie liegt bei 0.96.
+  Permutation rankt also nicht „Wichtigkeit", sondern „Wichtigkeit ×
+  Einzigartigkeit". Löst auch das in Results offen gelassene „points at a
+  different part of the feature set" auf.
+  *(c) Die ehrliche Ausnahme* — Borrowing dependency hat einen 0.956-Zwilling
+  (Liability to Equity) und überlebt Permutation trotzdem (GB sogar #1). Hiding
+  ist Tendenz, kein Gesetz. Vorsichtige Lesart: Bäume wählen pro Split EINE
+  Spalte; konzentriert das Modell seine Splits auf eine, schaut es den Zwilling
+  nie an und Shuffling trifft voll. Als Hypothese markieren.
+  *(d) GB-Konzentration, mögliche Erklärung* — warum stützt sich GB auf weniger
+  Features als RF (Results zeigt es nur deskriptiv)? Kandidat: RF sieht pro Split
+  nur ein Fünftel der Features (max_features=0.2) und MUSS streuen; GB hat keine
+  Beschränkung (kein max_features im Grid, sklearn-Default = alle 95) und kann
+  immer dieselben stärksten Spalten wählen. Mechanismus nicht belegt → hedgen,
+  verbindet sich mit Hyperparameter-Punkt (a) unten.
+
 ## Aus letztem Meeting mit Gabriel (17.07.2026)
 
 - [ ] **Undersampling-Kritik (Cluster-Varianz-Trade-off) → Discussion** — Gabriels

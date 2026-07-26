@@ -15,7 +15,7 @@ Table~\ref{tab:performance} reports each model at its best hyperparameter
 configuration, averaged over the $30$ cross-validation fits with standard deviations.
 Shown through the primary metric $F_2$, the two tree ensembles clearly outperform the
 linear baseline. Gradient Boosting reaches the highest $F_2$ at $0.550$, the Random
-Forest follows closely at $0.546$ and the Logistic Regression trails at $0.482$.
+Forest follows closely at $0.546$ and the Logistic Regression at $0.482$.
 This matches the model logic of Section~\ref{sec:models}. The ensembles can
 split on combinations of ratios that a linear model cannot capture and the results
 indicate, that the separation between healthy and bankrupt firms is not purely linear. They
@@ -23,7 +23,7 @@ gain that edge through recall, both catching roughly $74\%$ of bankruptcies agai
 the Logistic Regression's $55\%$, which is exactly what the $F_2$-score rewards.
 Precision is modest for all three, but the $F_2$ objective
 deliberately accepts more false alarms in exchange for catching more
-bankruptcies. The ROC-AUC values, all above $0.92$, look strong at first, yet 
+bankruptcies. The ROC-AUC values all above $0.92$ look strong, yet like shown before,
 the symmetric metric flatters the models under a $96.8/3.2$ split,
 which is exactly why the selection rests on $F_2$ instead.
 
@@ -44,22 +44,21 @@ which is exactly why the selection rests on $F_2$ instead.
       & $0.934 \pm 0.023$ \\
     \bottomrule
   \end{tabular}
-  \floatfoot{Source: own. Primary metric $F_2$; secondary metrics reported but not
-    used for selection.}
+  \floatfoot{Source: own.}
 \end{table}
 
 The selected hyperparameters are listed in Table~\ref{tab:selected}. For the logistic
-regression, as noted in Section~\ref{sec:lr}, the model uses Lasso rather than Ridge,
-with $C = 1.0$, equivalently $\lambda = 1$. Concerning the two tree columns, the same
+regression, as noted in Section~\ref{sec:lr}, the model uses Lasso rather than Ridge
+with $C = 1.0$ and equivalently $\lambda = 1$. Concerning the two tree columns, the same
 parameters can carry very different meanings. The number of trees,
-\texttt{n\_estimators}, for example: for the random forest more trees never hurt,
+\texttt{n\_estimators}, for example. For the random forest more trees never hurt,
 they only average away more variance until performance plateaus, so the choice is
 bounded by computation rather than by accuracy, whereas for gradient boosting each
 added tree is another correction step that lowers bias but eventually starts to overfit, 
 which makes it genuinely bias--variance relevant. \texttt{max\_depth}, as already
-shown, favours deep trees for the Random Forest ($10$), which it
+shown, favours deep trees for the Random Forest, which it
 can afford because Bagging and feature subsampling decorrelate them, whereas Gradient
-Boosting favours flat trees ($2$), each a weak learner whose bias is corrected
+Boosting favours flat trees, each a weak learner whose bias is corrected
 only step by step, so the two depths are not comparable. Two remaining choices are
 worth noting. The random forest's \texttt{max\_features} settled at $0.2$, below the
 usual \texttt{sqrt} or \texttt{log2} heuristics, so each split sees only a fifth of
@@ -89,7 +88,7 @@ $0.05$ to reduce bias gradually over many small steps rather than a few large on
 \label{sec:res-fi}
 
 The importance results are where the analysis becomes most informative. Applying the
-three methods of Chapter~\ref{ch:featureimportance} to the three models does not
+three methods of Chapter~\ref{ch:featureimportance} to the three models of Chapter 4.3 does not
 produce one ranking but a systematic divergence. Table~\ref{tab:divergence} shows this
 by giving, for each model, its single most important feature under each method.
 The pattern is read most clearly one model at a time, starting from the simple 
@@ -135,26 +134,35 @@ near-identical partner information is left for the methods to disagree over, so 
 largely read the same signal. It is the clearest evidence that the divergence in the
 ensembles below comes from the redundancy and not from the methods being unreliable in
 general. The direction also makes economic sense. The positive sign means that higher
-leverage raises the predicted probability of bankruptcy. Figure~\ref{fig:perm-lr}
-shows the permutation ranking, where the \emph{Debt ratio} stands clearly above the
-rest. That a few ROA variants still appear indicates that the penalty thinned the redundant
-group rather than removing it entirely, with the gap after ROA(B) marking it as the
-feature the model leans on.
+leverage raises the predicted probability of bankruptcy. Figures~\ref{fig:perm-lr} and \ref{fig:shap-lr} show the permutation and SHAP
+rankings, with the \emph{Debt ratio} standing clearly above the rest in both. That
+the ROA variants still appear indicates that the penalty thinned the redundant group
+rather than removing it entirely. What remains of the family stays readable, as both
+methods order it the same way, ROA(B) ahead of ROA(A) with ROA(C) far behind, which
+is also the order the native coefficients give. Even where redundancy survived the
+penalty, the three methods tell one consistent story for this model.
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.82\textwidth]{permutation_LogisticRegression.png}
-  \caption{Permutation importance for the logistic regression, measured as the drop
-    in $F_2$ when a feature is shuffled.}
+  \caption{Permutation importance for the logistic regression.}
   \label{fig:perm-lr}
+  \floatfoot{Source: own.}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.82\textwidth]{shap_LogisticRegression_bar.png}
+  \caption{Mean absolute SHAP values for the logistic regression.}
+  \label{fig:shap-lr}
   \floatfoot{Source: own.}
 \end{figure}
 
 The Random Forest reads differently across the three methods. Native Gini importance
 and SHAP both rank \emph{Persistent EPS} first, a measure of
 how steadily a firm has earned over the past four quarters, with a Gini importance of
-$0.092$ and a mean SHAP value of $0.026$. Beyond that top feature SHAP spreads its
-weight broadly, with no single feature standing out and most of the total sitting in
+$0.092$ and a mean SHAP value of $0.026$. Beyond that top feature, SHAP spreads its
+weight broadly with no single feature standing out and most of the total sitting in
 the long tail of smaller features (Figure~\ref{fig:shap-rf}).
 
 \begin{figure}[htbp]
@@ -165,29 +173,62 @@ the long tail of smaller features (Figure~\ref{fig:shap-rf}).
   \floatfoot{Source: own.}
 \end{figure}
 
-Permutation importance is led instead by leverage and interest measures, with the
-Interest Expense Ratio first at $0.020$ and the rest of its values small
-(Figure~\ref{fig:perm-rf}). Persistent EPS drops out of the ranking entirely. Its
-closest earnings relatives, such as \emph{Net profit before tax/Paid-in capital} and
-\emph{Per Share Net profit before tax}, are correlated with it above $0.95$, so when
-it alone is shuffled they still carry almost the same information and the score barely
-moves. This is the logic described in Section~\ref{sec:fi-permutation}, where
-permutation hides a feature that has close substitutes and here it seems to hide the very
-feature that native importance and SHAP both rank first.
-
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.82\textwidth]{permutation_RandomForest.png}
-  \caption{Permutation importance for the random forest, drop in $F_2$ when a feature
-    is shuffled.}
+  \caption{Permutation importance for the random forest.}
   \label{fig:perm-rf}
   \floatfoot{Source: own.}
 \end{figure}
 
-Gradient Boosting is the best-performing model of the three and it produces the
-clearest single ranking. Under SHAP the top feature is \emph{Borrowing dependency} at
-$0.356$, a direct measure of how far a firm depends on debt, which had already risen
-to second place under the random forest and now leads, ahead of Persistent EPS at
-$0.292$. Native Gini importance still ranks Persistent EPS first, so SHAP overturns
-the impurity ordering here.
+Permutation importance is led instead by leverage and interest measures, with the
+Interest Expense Ratio first at $0.020$, followed by the Degree of Financial
+Leverage and the Interest Coverage Ratio (Figure~\ref{fig:perm-rf}). None of these
+ranks higher than ninth under SHAP or thirteenth under Gini, so permutation points at
+a different part of the feature set than the other two methods. \emph{Persistent EPS}, first under both Gini and SHAP, drops out of the permutation
+ranking entirely, which is consistent with the hiding pattern described in
+Section~\ref{sec:fi-permutation}.
 
+Gradient Boosting is the best-performing model of the three and it produces the
+clearest single ranking. Under SHAP the top feature is \emph{Borrowing dependency}
+at $0.356$, ahead of Persistent EPS at $0.292$. The ratio measures how far a firm's
+financing rests on borrowed capital rather than its own funds. It is also the one
+feature that every method places high in both ensembles. In the random forest it
+stood sixth by Gini, fourth by permutation and second by SHAP and here it ranks
+second by Gini and first under both SHAP and permutation. Native Gini importance
+still ranks Persistent EPS first, so SHAP and Permutation overturn the impurity 
+ordering here. Figure~\ref{fig:shap-gb} shows the full ranking. Compared to the forest's 
+flat profile, several leading features stand more clearly apart from the tail, with 
+Non-industry income and expenditure/revenue third at $0.265$ and ROA(B) 
+fourth at $0.217$.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.82\textwidth]{shap_GradientBoosting_bar.png}
+  \caption{Mean absolute SHAP values for gradient boosting.}
+  \label{fig:shap-gb}
+  \floatfoot{Source: own.}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.82\textwidth]{permutation_GradientBoosting.png}
+  \caption{Permutation importance for gradient boosting.}
+  \label{fig:perm-gb}
+  \floatfoot{Source: own.}
+\end{figure}
+
+Permutation importance shows the most extreme picture of the chapter and agrees with
+SHAP on the top feature. \emph{Borrowing dependency} leads by a wide margin at
+$0.024$, more than ten times the next entry, with Net Value Per Share (C) already
+down at $0.002$ and every other feature below that (Figure~\ref{fig:perm-gb}).
+Several of these small entries carry standard deviations larger than their means, 
+so their drops cannot be separated from zero. A ranking this concentrated 
+invites skepticism, but it is not enirely unique to permutation.
+Gini importance distributes a total of one across all features, so it shows how a
+model spreads its reliance. In gradient boosting the top feature alone carries a
+quarter of that total ($0.247$), while in the forest no feature carries more than a
+tenth ($0.092$). The boosted model therefore appears to rely on fewer features than the forest and
+the concentrated permutation ranking fits this picture. \emph{Persistent EPS} again
+drops out of the ranking entirely, consistent with the same hiding pattern as in the
+random forest.

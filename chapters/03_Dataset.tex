@@ -28,7 +28,7 @@ of either 0 = healthy or 1 = bankrupt.
 Given this setup, two problems arise that shape the entire analysis. First one being the obvious severe class imbalance 
 already visible in Table~\ref{tab:dataset}. By the nature of the problem, bankruptcies are rare events, here making up only 3.23\% 
 of all observations. A naive classifier trained on the full data could reach very high accuracies just by labeling almost every company as 
-healthy, but it would be predictively worthless: it gets the 96.77\% of healthy firms right while missing the very cases we care about, 
+healthy, but it would be predictively worthless. It gets the 96.77\% of healthy firms right while missing the very cases we care about, 
 the 3.23\% that actually go bankrupt. 
 
 The second problem is the multicollinearity that comes with this high dimensionality. Many of the 95 ratios are just algebraic transformations 

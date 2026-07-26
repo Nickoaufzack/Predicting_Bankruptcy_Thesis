@@ -5,10 +5,11 @@
 \label{sec:app-grids}
 
 Table~\ref{tab:grids} lists the parameters searched for each model in the nested
-grid search of Section~\ref{sec:cv}. The three grids contain $12$, $36$ and $12$
-combinations respectively, and since every combination is evaluated over the full
-$30$ cross-validation fits, the search amounts to $1{,}800$ model fits in total. The
-configurations that won this comparison are reported in Table~\ref{tab:selected}.
+grid search described in Section~\ref{sec:cv}. The three grids contain $12$, $36$
+and $12$ combinations respectively, and since every combination is evaluated over
+the full $30$ cross-validation fits, the search amounts to $1{,}800$ model fits in
+total. The winning configurations are reported in Table~\ref{tab:selected} of
+Section~\ref{sec:res-performance}.
 
 \begin{table}[htbp]
   \centering
@@ -38,6 +39,103 @@ configurations that won this comparison are reported in Table~\ref{tab:selected}
   \end{tabular}
   \floatfoot{Source: own. Each combination is evaluated over the full $30$-fit
     cross-validation.}
+\end{table}
+
+\section{Native Importance Rankings}
+\label{sec:app-native}
+
+Tables~\ref{tab:native-lr} to~\ref{tab:native-gb} list the top $15$ features by
+native importance for each model, complementing the leading entries reported in
+Section~\ref{sec:res-fi}. For the logistic regression the values are signed
+coefficients, where a positive sign pushes the prediction toward bankruptcy. For
+the two ensembles they are Gini impurity importances, which sum to one across all
+features.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Native importance, logistic regression: top 15 signed coefficients.}
+  \label{tab:native-lr}
+  \small
+  \begin{tabular}{rlr}
+    \toprule
+    & \textbf{Feature} & \textbf{Coefficient} \\
+    \midrule
+    1  & Debt ratio \%                          & $+14.493$ \\
+    2  & ROA(B) before interest and depreciation after tax & $-9.558$ \\
+    3  & ROA(A) before interest and \% after tax & $-5.193$ \\
+    4  & Cash/Total Assets                      & $-4.738$ \\
+    5  & Retained Earnings to Total Assets      & $+4.053$ \\
+    6  & Total Asset Turnover                   & $-2.758$ \\
+    7  & Total assets to GNP price              & $-2.678$ \\
+    8  & Interest-bearing debt interest rate    & $-1.624$ \\
+    9  & ROA(C) before interest and depreciation before interest & $-1.314$ \\
+    10 & Tax rate (A)                           & $-1.219$ \\
+    11 & After-tax net Interest Rate            & $+1.192$ \\
+    12 & Liability-Assets Flag                  & $-0.997$ \\
+    13 & Cash Turnover Rate                     & $-0.764$ \\
+    14 & Fixed Assets Turnover Frequency        & $+0.569$ \\
+    15 & Operating Profit Rate                  & $+0.565$ \\
+    \bottomrule
+  \end{tabular}
+  \floatfoot{Source: own.}
+\end{table}
+
+\begin{table}[htbp]
+  \centering
+  \caption{Native importance, random forest: top 15 Gini impurity importances.}
+  \label{tab:native-rf}
+  \small
+  \begin{tabular}{rlr}
+    \toprule
+    & \textbf{Feature} & \textbf{Importance} \\
+    \midrule
+    1  & Persistent EPS in the Last Four Seasons     & $0.092$ \\
+    2  & Net Income to Stockholder's Equity          & $0.073$ \\
+    3  & Net profit before tax/Paid-in capital       & $0.059$ \\
+    4  & Per Share Net profit before tax (Yuan)      & $0.053$ \\
+    5  & Continuous interest rate (after tax)        & $0.046$ \\
+    6  & Borrowing dependency                        & $0.041$ \\
+    7  & Net Income to Total Assets                  & $0.032$ \\
+    8  & Total income/Total expense                  & $0.028$ \\
+    9  & Non-industry income and expenditure/revenue & $0.027$ \\
+    10 & Net worth/Assets                            & $0.025$ \\
+    11 & Debt ratio \%                               & $0.025$ \\
+    12 & Equity to Liability                         & $0.024$ \\
+    13 & Interest Expense Ratio                      & $0.023$ \\
+    14 & Degree of Financial Leverage (DFL)          & $0.022$ \\
+    15 & Interest Coverage Ratio (Interest expense to EBIT) & $0.020$ \\
+    \bottomrule
+  \end{tabular}
+  \floatfoot{Source: own.}
+\end{table}
+
+\begin{table}[htbp]
+  \centering
+  \caption{Native importance, gradient boosting: top 15 Gini impurity importances.}
+  \label{tab:native-gb}
+  \small
+  \begin{tabular}{rlr}
+    \toprule
+    & \textbf{Feature} & \textbf{Importance} \\
+    \midrule
+    1  & Persistent EPS in the Last Four Seasons     & $0.247$ \\
+    2  & Borrowing dependency                        & $0.105$ \\
+    3  & Non-industry income and expenditure/revenue & $0.079$ \\
+    4  & Net Income to Stockholder's Equity          & $0.052$ \\
+    5  & Continuous interest rate (after tax)        & $0.048$ \\
+    6  & ROA(C) before interest and depreciation before interest & $0.035$ \\
+    7  & Degree of Financial Leverage (DFL)          & $0.034$ \\
+    8  & Interest Coverage Ratio (Interest expense to EBIT) & $0.027$ \\
+    9  & ROA(B) before interest and depreciation after tax & $0.026$ \\
+    10 & Cash/Total Assets                           & $0.025$ \\
+    11 & Inventory/Working Capital                   & $0.025$ \\
+    12 & Equity to Liability                         & $0.023$ \\
+    13 & Debt ratio \%                               & $0.021$ \\
+    14 & Interest Expense Ratio                      & $0.021$ \\
+    15 & Net worth/Assets                            & $0.015$ \\
+    \bottomrule
+  \end{tabular}
+  \floatfoot{Source: own.}
 \end{table}
 
 \section{Complexity and Overfitting Curves}
