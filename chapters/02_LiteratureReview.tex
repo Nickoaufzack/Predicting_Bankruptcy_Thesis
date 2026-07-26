@@ -4,68 +4,78 @@
 The quantitative prediction of corporate bankruptcy has moved through three
 overlapping phases, from classical statistical models over the adoption of
 machine learning to a growing concern with class imbalance and model
-interpretability. This chapter reviews the strands most relevant to the present
-work and isolates the gap the thesis addresses.
+interpretability. This chapter reviews the literature most relevant to 
+the present work and isolates the gap the thesis addresses.
 
-Early bankruptcy prediction relied on discriminant analysis and later on logit
-models estimated over a handful of financial ratios. These models are transparent
-and their coefficients carry an economic sign, but they impose strong assumptions
-on the functional form and struggle with the non-linear interactions that
-characterize firm-level data. The comprehensive study of \textcite{liang2016} is
-representative of the transition to machine learning. It combines financial
-ratios with corporate-governance indicators across a large Taiwanese sample and
-shows that ensemble classifiers systematically outperform single linear models.
-Their work also established much of the feature-category groundwork on which
-subsequent studies, including this one, rely. At the same time,
-\textcite{liang2016} force the two classes into an even balance, a design choice
-that later work has questioned and that the present thesis deliberately avoids.
+The study of bankruptcy prediction initially involved \textcite{altman1968}, who
+developed the Z-score by combining five financial ratios into a single
+discriminant function. \textcite{ohlson1980} later advanced the field by
+introducing logit models. Both of these methods are extensively discussed in the
+literature reviewed in this thesis and are therefore only briefly noted here.
+What matters for the present work is their common limitation. Although these
+models are transparent and have coefficients that can be easily understood in
+economic terms, they assume a fixed functional form and are thus incapable of
+dealing with potential non-linear interactions in firm-level data. The study by
+\textcite{liang2016} is representative of the shift towards machine learning and
+is also the origin of this dataset. It demonstrates that ensemble classifiers consistently
+outperform single linear models. At the same time, \textcite[562]{liang2016}
+forced the two classes into an even balance by simple stratified sampling, a
+decision that has since been questioned by subsequent research and which this 
+thesis also does not follow.
 
-Because bankruptcies are rare, the treatment of class imbalance has become a
-defining methodological question. \textcite{veganzones2018} show that standard
-learners deteriorate sharply as the minority share falls, so some form of
-rebalancing is necessary. Two families of remedies exist and they differ in what
-kind of data the model ends up learning from. Oversampling methods, of which
-SMOTE \parencite{chawla2002} is the most widely used, generate additional
-synthetic minority observations until the classes are balanced. Undersampling
-methods instead reduce the majority class, so every observation the model is
-trained on is a firm that actually existed. This difference is the methodological
-commitment of the present thesis and Chapter~\ref{ch:methodology} builds directly
-on it. The closest existing work is \textcite{wangliu2021}, who study several
-undersampling techniques on precisely the dataset used here, combined with
-repeated stratified cross-validation and the $F_2$-score as the primary metric.
-Their best configuration, edited nearest neighbours with a naive-Bayes
-classifier, reaches an $F_2$ of $0.423$. Their sampling philosophy, leakage-aware
-validation and choice of metric form the base that this thesis extends.
-Cluster-based undersampling in particular has precedent beyond their work, as
-\textcite{ansahnarh2024} apply centroid-based reduction on the same data.
+Since bankruptcies are rare, the treatment of class imbalance has turned into a
+major methodological issue. \textcite{veganzones2018} demonstrate that standard
+models tend to perform badly as soon as bankrupt firms start to become too rare
+in the training data, which means that some kind of rebalancing is required.
+There are two types of solutions and they differ according to the kind of data
+the model ends up learning. The oversampling methods, of which SMOTE
+\parencite{chawla2002} is the most commonly used, create additional synthetic
+observations for the minority class until the classes are balanced. In contrast,
+the undersampling methods reduce the number of cases in the majority class, so
+that each observation on which the model is trained actually corresponds to a
+firm that really existed. This difference is the methodological commitment of
+the thesis. The closest study in this area is \textcite{wangliu2021}, in which
+they examine several undersampling methods on exactly the dataset used here,
+combined with repeated stratified cross-validation and the $F_2$-score as the
+primary metric. The best setup that they achieve, using the edited nearest
+neighbours approach with a Naive Bayes classifier, attains an $F_2$ score of
+$0.423$ \parencite[12]{wangliu2021}. The sampling approach, the idea of
+leakage-aware validation and the choice of metric form the base that this thesis
+extends. Cluster-based undersampling in particular has already existing work
+outside of Wang and Liu, since \textcite[11]{ansahnarh2024} also keep the
+cluster centroids of the majority class on the same data, making use of the same
+Python implementation as is used here, even though it is part of a more complex
+overall setup.
 
-A parallel and considerably larger body of recent work reports far higher
-performance by combining synthetic oversampling with flexible learners.
-\textcite{pham2025}, who also provide a broad overview of sampling strategies,
-reach accuracies near $98.6\%$ with SMOTE and an artificial neural network, while
-\textcite{suresh2025} and \textcite{sinap2025} report comparable figures with
-related pipelines. \textcite{liashenko2023} and \textcite{amirshahi2024} survey
-balancing methods and ensembles across both regimes. These results are impressive
-at face value, but a substantial part of the minority class these models learn
-from, and are sometimes evaluated on, consists of firms that never existed, and
-headline accuracy is a misleading summary under a $96.8/3.2$ split. The present
-thesis treats this literature as a benchmark to argue against rather than to
-emulate, valuing the integrity of the training data over reported performance.
+There is also a large amount of more recent research which finds much higher
+performance by combining synthetic oversampling with flexible learning methods,
+an approach that \textcite{liashenko2023} and \textcite{amirshahi2024} survey
+across both balanced and imbalanced settings. \textcite[305]{pham2025}, who also
+provide a general overview of sampling strategies, achieve accuracies close to
+$98.6\%$ using SMOTE and an artificial neural network, while \textcite{suresh2025}
+and \textcite{sinap2025} report similar results with similar approaches.
+Nevertheless, these figures are based on balanced data and so refer to a
+different scenario from the natural $96.8/3.2$ split, a situation in which
+accuracy on its own is not very informative. This thesis takes these studies as
+points of differentiation rather than as templates and accepts the lower
+reported numbers in exchange for training only on real firms.
 
-A final strand concerns which features drive the predictions. Several studies
-approach this through upfront intervention, either selecting features before
-training, as \textcite{chaudhary2023} does with a Pearson-correlation screen, or
-transforming them, as \textcite{ko2024} and \textcite{sinap2025} do with
-factor analysis and principal components. Such filters are simple, but they
-capture only linear association and answer a different question from the one
-posed here, ranking features before and independently of the model, whereas this
-thesis asks what the trained model actually relies on. Post-hoc importance
-methods have been applied in this context, as \textcite{ansahnarh2024} report
-random-forest importances and \textcite{sinap2025} employ SHAP, yet these
-studies report a single importance measure without examining whether alternative
-measures would agree. That is the gap this thesis targets. Rather than adopting
-one importance method, it applies native importance, permutation importance and
-SHAP side by side and makes their comparison the object of study, on models
-trained without any synthetic data. The technical foundations of these methods
-are introduced where they are used, in Chapters~\ref{ch:methodology}
-and~\ref{ch:featureimportance}.
+The final aspect of the issue relates to the features, the financial ratios,
+which are responsible for the predictions. Some studies address this by carrying
+out a selection at an early stage, either by selecting the features before
+training, for instance \textcite{veganzones2018} who eliminate highly correlated
+ratios and \textcite{chaudhary2023} who applies a Pearson-correlation screen, or
+by transforming the features, as \textcite{ko2024} and \textcite{sinap2025} do
+by means of factor analysis and principal components. Even though these
+filtering methods are simple, they evaluate the features before and
+independently of the model, whereas the present thesis is concerned with finding
+out what the trained model in fact relies on. In this regard, post-hoc
+importance methods have been used, as \textcite{ansahnarh2024} report
+random-forest importances and \textcite{sinap2025} is the only one of the
+studies looked at here that makes use of SHAP, even though each of them provides
+only a single importance measure without checking whether other measures would
+be in agreement. Together, the framework being trained entirely on real firms
+through undersampling and the comparison of importance methods on this
+framework make up the gap that this thesis aims to address. The technical
+background of these methods is given when they are discussed in
+Chapters~\ref{ch:methodology} and~\ref{ch:featureimportance}.

@@ -3,6 +3,37 @@
 Laufende Sammelstelle für offene Punkte. Layout-Ideen sind bewusst ein eigener
 Backlog (eigene Runde am Ende, kein Fokus während der Schreibphase).
 
+## ENDSPURT-PLAN (Stand 26.07., alle Kapitel gedraftet)
+
+Viele alte TODOs unten sind durch die neuen Kapitel-Drafts erledigt:
+Abstract→Intro ✓, Sinap-Vergleich ✓ (Zahlen gegen PDF verifiziert),
+Undersampling-Kosten ✓, Cluster-Varianz-Trade-off ✓, Test-auf-voller-Verteilung ✓,
+Borrowing-Modellabhängigkeit ✓, Pham-Sampling-Übersicht ✓,
+Feature-Handling-Landkarte ✓ (beides Lit Review), ROC-Platzhalter entfernt ✓,
+Splits/hides/shares in Discussion ✓. Die Discussion-Punkte Isolations-Befund,
+Borrowing-Ausnahme, GB-Konzentration/max_features und Baumtiefen-Hypothese sind
+BEWUSST NICHT im Text (zu unsicher) → nur Verteidigungsreserve.
+
+**Noch offen (Reihenfolge):**
+- [ ] **Einbau der neuen Kapitel** — Introduction, Literature Review, Discussion
+  (alte komplett ersetzen), Conclusion; dazu Bib-Eintrag `allianztrade2026`
+  (chawla2002 existiert schon).
+- [ ] **Conclusion anpassen** — 0.423-W&L-Vergleich auf Halbsatz kürzen (Detail
+  wohnt jetzt in der Discussion); Kapitel danach final gegen Intro abgleichen.
+- [ ] **Table 1 Caption** — "Best $F_2$ in bold" Erklärung wieder in die Caption
+  (Fett ist gesetzt, wird aber nicht mehr erklärt). ZWEIMAL geflaggt!
+- [ ] **Mo: Humanize/AI-Detection-Durchgang** (Niklas liest Klang/Stil) +
+  **mechanische Checks per Skript** (Claude): LR/RF/GB Groß-/Kleinschreibung,
+  Gedankenstriche, doppelte Leerzeichen, kaputte \ref/\cite, Zahlenformate.
+- [ ] **Mo Abend: Peer-Review-Versand** (ohne Layout-Politur ok).
+- [ ] **Di/Mi: Layout + Verzeichnisse** + Peer-Feedback einarbeiten (+ alte
+  Layout-Backlog-Punkte unten: Header/Footer, headheight).
+- [ ] **Do Abend / Fr früh: Abgabe.** Seitenzahl final an Gabriel melden.
+- [ ] Kleinkram bei Gelegenheit: TWSE-Regel-URL (Fußnote in Dataset),
+  Source-Fußnote an Confusion-Schema-Tabelle in Performance Metrics prüfen,
+  FI-Intro optional 1 Satz Contribution-Verweis (Gabriel-Wunsch, jetzt evtl.
+  durch Intro abgedeckt — beim Durchlesen entscheiden).
+
 ## Content / Writing
 
 - [x] **Dataset-Quelle sauber referenzieren** — erledigt 10.07.2026: Datensatz
