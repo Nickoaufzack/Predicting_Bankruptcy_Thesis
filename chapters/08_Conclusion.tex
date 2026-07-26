@@ -1,30 +1,34 @@
 \chapter{Conclusion}
 \label{ch:conclusion}
 
-This thesis set out to predict bankruptcy on the Taiwanese dataset without
-synthetic data and to open the resulting models to interpretation. Trained
-exclusively on real firms through ClusterCentroids undersampling, evaluated with
-repeated stratified cross-validation and selected on the $F_2$-score, gradient
-boosting reached $0.550$ and the random forest $0.546$, both clearly ahead of the
-logistic regression at $0.482$ and above the best comparable result of
-\textcite{wangliu2021} at $0.423$, under a setup that differs in the undersampling
-algorithm and the model family, so the numbers indicate rather than prove an
-improvement.
+This thesis asked two questions, how well bankruptcy can be predicted when the
+models learn from real firms only and which financial features the fitted
+models then rely on. The first question is answered by the framework itself.
+With ClusterCentroids undersampling, repeated stratified cross-validation and
+the $F_2$-score as the selection metric, gradient boosting reaches an $F_2$ of
+$0.550$ and the random forest $0.546$, both clearly ahead of the logistic
+regression at $0.482$ and above the comparable result reported by
+\textcite{wangliu2021}.
 
-The main contribution lies one layer deeper. Where \textcite{wangliu2021} stop at
-predictive performance, this thesis adds a feature-importance layer and compares
-three methods across three models. The comparison shows that there is no single
-answer to which financial ratios matter. Each method departs from the others in
-the direction its known weakness predicts, as impurity importance splits credit
-between redundant features, permutation hides features with close substitutes and
-SHAP shares credit while keeping it readable. A ranking is therefore a joint
-product of the data, the model and the method, and any study reporting one list
-without this context claims more than the tools can carry. Within these limits the
-economic signal is consistent, as every model places a leverage measure at or near
-the top, read throughout as association rather than cause.
+The answer to the second question is that there is no single ranking. 
+Although the three importance methods diverge, they seem to do so along 
+their known weaknesses, impurity importance splits credit between redundant 
+features, permutation hides features with close substitutes and SHAP shares 
+the credit while at the same time keeping it visible. Among these differences 
+one signal remains stable, as each model puts a measure of debt dependence 
+either at the top or very close to it. The contribution of the thesis therefore 
+lies in the comparison. If each ranking were considered only on its own it would 
+already seem to give the correct answer, it is only by placing them side by side 
+that one can see how much of the ranking is influenced by the model and the method 
+behind it.
 
-Two extensions follow naturally. Validating the rankings on a second dataset from
-a different market and period would show which parts of the pattern travel beyond
-Taiwan. And connecting the surviving features to economic theory in more depth,
-ideally with a design that supports causal statements, would turn what this thesis
-carefully reports as association into tested explanation.
+Both of these contributions indicate the same direction for future research. Since 
+the framework is not tied to this dataset, the natural next step is to apply it to 
+data from other countries and markets in order to find out whether the undersampling 
+approach holds and whether similar ratios appear under the importance methods. 
+Datasets whose collection is documented more transparently would additionally allow 
+first steps toward causal statements, which this thesis avoided carefully. 
+Such data is rare, as collecting firm records of this scope is complex and costly, 
+which is exactly why the well-studied benchmark Taiwanese dataset was chosen here. 
+Until then, the value of this thesis lies in a pipeline whose results can be trusted 
+for what they are, predictions and associations measured on real firms.

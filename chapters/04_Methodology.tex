@@ -104,12 +104,14 @@ for each cluster we keep a \emph{real} firm that is nearest to its centroid, i.e
 representative member, and train on those. In \texttt{imbalanced-learn} this
 behaviour is the \texttt{voting=\textquotesingle hard\textquotesingle} setting. The
 result is a downsized majority class that stays as representative of the original
-distribution as possible, using only genuine firms. The degree of balancing is set
+distribution as possible, using only genuine firms. The
+same implementation has been applied to this dataset before, as
+\textcite[11]{ansahnarh2024} also retain cluster centroids of the majority
+class, which supports it as an established choice. The degree of balancing is set
 by the \texttt{sampling\_strategy=0.3}, meaning the bankrupt
 firms will make up $30\%$ of the now undersampled majority. This value is fixed rather
 than tuned, chosen for comparability with \textcite{wangliu2021}. The full pipeline
 with the per-fold counts will be covered in Section~\ref{sec:cv}.
-
 
 
 \section{Prediction Models}

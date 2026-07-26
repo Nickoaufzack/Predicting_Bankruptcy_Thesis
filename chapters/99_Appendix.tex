@@ -37,8 +37,7 @@ Section~\ref{sec:res-performance}.
       & \texttt{subsample}          & $0.8$ (fixed) \\
     \bottomrule
   \end{tabular}
-  \floatfoot{Source: own. Each combination is evaluated over the full $30$-fit
-    cross-validation.}
+  \floatfoot{Source: own.}
 \end{table}
 
 \section{Native Importance Rankings}
@@ -143,10 +142,10 @@ features.
 
 The following figures provide the overfitting check referenced in
 Section~\ref{sec:cv}. For each model one complexity parameter is swept while all
-remaining parameters are held at their grid-search optimum, and training and
+remaining parameters are held at their grid-search optimum and training and
 validation $F_2$ are traced across that sweep. The selected configurations of
 Table~\ref{tab:selected} sit at or before the point where the validation curve turns
-down, which is what rules out overfitting at the chosen settings. As noted in
+down or stagnates, which is what rules out overfitting at the chosen settings. As noted in
 Section~\ref{subsec:gb}, the depth axis is not comparable across the random forest
 and gradient boosting.
 
