@@ -228,6 +228,11 @@ This paper was not previously presented to another examination board and has not
   
 \usepackage{chngcntr}
 \counterwithout{footnote}{chapter}
+% Figures and tables numbered continuously across the whole document (Figure 1..N,
+% Table 1..N), like footnotes above. Removes the per-chapter reset so \thefigure /
+% \thetable (arabic, set below) stay unique; equations keep chapter.number.
+\counterwithout{figure}{chapter}
+\counterwithout{table}{chapter}
 \usepackage[doublespacing]{setspace}
 \usepackage{enumitem}
 \setlist{nosep}
