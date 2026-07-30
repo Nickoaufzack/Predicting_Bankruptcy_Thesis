@@ -14,13 +14,13 @@ Chapter~\ref{ch:discussion}.
 Table~\ref{tab:performance} reports each model at its best hyperparameter
 configuration, averaged over the $30$ cross-validation fits with standard deviations.
 Shown through the primary metric $F_2$, the two tree ensembles clearly outperform the
-linear baseline. Gradient Boosting reaches the highest $F_2$ at $0.550$, the Random
-Forest follows closely at $0.546$ and the Logistic Regression at $0.482$.
+linear baseline. Gradient boosting reaches the highest $F_2$ at $0.550$, the random
+forest follows closely at $0.546$ and the logistic regression at $0.482$.
 This matches the model logic of Section~\ref{sec:models}. The ensembles can
 split on combinations of ratios that a linear model cannot capture and the results
-indicate that the separation between healthy and bankrupt firms is not purely linear. They
+indicate that the separation between healthy and bankrupt firms seems to be not purely linear. They
 gain that edge through recall, both catching roughly $74\%$ of bankruptcies against
-the Logistic Regression's $55\%$, which is exactly what the $F_2$-score rewards.
+the logistic regression's $55\%$, which is exactly what the $F_2$-score rewards.
 Precision is modest for all three, but the $F_2$ objective
 deliberately accepts more false alarms in exchange for catching more
 bankruptcies. The ROC-AUC values all above $0.92$ look strong, yet like shown before,
@@ -47,28 +47,9 @@ which is exactly why the selection rests on $F_2$ instead.
   \floatfoot{Source: own.}
 \end{table}
 
-The selected hyperparameters are listed in Table~\ref{tab:selected}. For the logistic
-regression, as noted in Section~\ref{sec:lr}, the model uses Lasso rather than Ridge
-with $C = 1.0$ and equivalently $\lambda = 1$. Concerning the two tree columns, the same
-parameters can carry very different meanings. The number of trees,
-\texttt{n\_estimators}, for example. For the random forest more trees never hurt,
-they only average away more variance until performance plateaus, so the choice is
-bounded by computation rather than by accuracy, whereas for gradient boosting each
-added tree is another correction step that lowers bias but eventually starts to overfit, 
-which makes it genuinely bias--variance relevant. \texttt{max\_depth}, as already
-shown, favours deep trees for the Random Forest, which it
-can afford because Bagging and feature subsampling decorrelate them, whereas Gradient
-Boosting favours flat trees, each a weak learner whose bias is corrected
-only step by step, so the two depths are not comparable. Two remaining choices are
-worth noting. The random forest's \texttt{max\_features} settled at $0.2$, below the
-usual \texttt{sqrt} or \texttt{log2} heuristics, so each split sees only a fifth of
-the features, which is exactly the stronger decorrelation that $95$ partly
-redundant ratios call for. Gradient Boosting settled on the smaller learning rate of
-$0.05$ to reduce bias gradually over many small steps rather than a few large ones. 
-
 \begin{table}[htbp]
   \centering
-  \caption{Selected hyperparameters (highest fold-averaged $F_2$).}
+  \caption{Selected hyperparameters on highest fold-averaged $F_2$.}
   \label{tab:selected}
   \begin{tabular}{l|l|l}
     \toprule
@@ -83,6 +64,26 @@ $0.05$ to reduce bias gradually over many small steps rather than a few large on
   \end{tabular}
   \floatfoot{Source: own.}
 \end{table}
+
+The selected hyperparameters are listed in Table~\ref{tab:selected}. For the logistic
+regression, as noted in Section~\ref{sec:lr}, the model uses Lasso rather than Ridge
+with $C = 1.0$ and equivalently $\lambda = 1$. Concerning the two tree columns, the same
+parameters can carry very different meanings. The number of trees,
+\texttt{n\_estimators}, for example. For the random forest more trees never hurt,
+they only average away more variance until performance plateaus, so the choice is
+bounded by computation rather than by accuracy, whereas for gradient boosting each
+added tree is another correction step that lowers bias but eventually starts to overfit, 
+which makes it genuinely bias--variance relevant. \texttt{max\_depth}, as already
+shown, favours deep trees for the random forest, which it
+can afford because bagging and feature subsampling decorrelate them, whereas gradient
+boosting favours flat trees, each a weak learner whose bias is corrected
+only step by step, so the two depths are not comparable. Two remaining choices are
+worth noting. The random forest's \texttt{max\_features} settled at $0.2$, below the
+usual \texttt{sqrt} or \texttt{log2} heuristics, so each split sees only a fifth of
+the features, which is exactly the stronger decorrelation that $95$ partly
+redundant ratios call for. Gradient boosting settled on the smaller learning rate of
+$0.05$ to reduce bias gradually over many small steps rather than a few large ones.
+The full search spaces can be seen in Appendix~\ref{sec:app-grids}. 
 
 \section{Feature Importance Results}
 \label{sec:res-fi}
@@ -100,15 +101,13 @@ linear model to the two more complex ensembles, where they begin to disagree.
     respective importance scores: signed coefficient for native LR; Gini impurity importance
     for native RF/GB; mean $F_2$ drop for permutation; mean $|\text{SHAP}|$ for SHAP.}
   \label{tab:divergence}
-  % Scores sit on a second line below the feature name: with the values inline the
-  % table runs 100pt past \textwidth, and no font reduction closes that gap.
   \begin{tabular}{llll}
     \toprule
     \textbf{Model} & \textbf{Native} & \textbf{Permutation} & \textbf{SHAP} \\
     \midrule
     Logistic Regression & Debt ratio \% & Debt ratio \%
       & Debt ratio \% \\
-                        & ($+14.49$)    & ($0.248$)
+                        & ($14.49$)    & ($0.248$)
       & ($0.625$) \\
     \addlinespace
     Random Forest       & Persistent EPS & Interest Expense Ratio
@@ -127,17 +126,17 @@ linear model to the two more complex ensembles, where they begin to disagree.
 
 The logistic regression is the control case with all three methods ranking the
 \emph{Debt ratio} first. Its native coefficient is the largest in magnitude and
-positive at $+14.49$, it takes the top permutation drop at $0.248$ and it leads the
+positive at $14.49$, it takes the top permutation drop at $0.248$ and it leads the
 SHAP ranking at $0.625$. This agreement is not a coincidence. Because the $\ell_1$ 
 penalty had already thinned the redundant twins in each
 correlated group, far less near-identical partner information is left for the
 methods to disagree over than in the ensembles, so all three methods largely read the same signal.
-The agreement likely also owes something to the linear structure itself, either
+The agreement likely also owes something to the linear structure itself. Either
 way it shows that the three methods can agree under simple conditions, so the
 divergence in the ensembles below marks a real difference rather than a
 weakness of the methods. The direction also makes economic sense. The positive sign means that higher
 leverage raises the predicted probability of bankruptcy. Figures~\ref{fig:perm-lr} and \ref{fig:shap-lr} show the permutation and SHAP
-rankings, with the \emph{Debt ratio} standing clearly above the rest in both. That
+rankings, with the Debt ratio standing clearly above the rest in both. That
 the ROA variants still appear indicates that the penalty thinned the redundant group
 rather than removing it entirely. What remains of the family stays readable, as both
 methods order it the same way, ROA(B) ahead of ROA(A) with ROA(C) far behind, which
@@ -160,7 +159,7 @@ penalty, the three methods tell one consistent story for this model.
   \floatfoot{Source: own.}
 \end{figure}
 
-The Random Forest reads differently across the three methods. Native Gini importance
+The random forest reads differently across the three methods. Native Gini importance
 and SHAP both rank \emph{Persistent EPS} first, a measure of
 how steadily a firm has earned over the past four quarters, with a Gini importance of
 $0.092$ and a mean SHAP value of $0.026$. Beyond that top feature, SHAP spreads its
@@ -191,14 +190,14 @@ a different part of the feature set than the other two methods. \emph{Persistent
 ranking entirely, which is consistent with the hiding pattern described in
 Section~\ref{sec:fi-permutation}.
 
-Gradient Boosting is the best-performing model of the three and it produces the
+Gradient boosting is the best-performing model of the three and it produces the
 clearest single ranking. Under SHAP the top feature is \emph{Borrowing dependency}
 at $0.356$, ahead of Persistent EPS at $0.292$. The ratio measures how far a firm's
 financing rests on borrowed capital rather than its own funds. It is also the one
 feature that every method places high in both ensembles. In the random forest it
 stood sixth by Gini, fourth by permutation and second by SHAP and here it ranks
 second by Gini and first under both SHAP and permutation. Native Gini importance
-still ranks Persistent EPS first, so SHAP and Permutation overturn the impurity 
+still ranks Persistent EPS first, so SHAP and permutation overturn the impurity 
 ordering here. Figure~\ref{fig:shap-gb} shows the full ranking. Compared to the forest's 
 flat profile, several leading features stand more clearly apart from the tail, with 
 Non-industry income and expenditure/revenue third at $0.265$ and ROA(B) 

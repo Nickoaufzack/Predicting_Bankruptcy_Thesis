@@ -25,22 +25,19 @@ of either 0 = healthy or 1 = bankrupt.
   \end{tabular}
   \floatfoot{Source: \textcite{uci_taiwan}.}
 \end{table}
+
 Given this setup, two problems arise that shape the entire analysis. First one being the obvious severe class imbalance 
 already visible in Table~\ref{tab:dataset}. By the nature of the problem, bankruptcies are rare events, here making up only 3.23\% 
 of all observations. A naive classifier trained on the full data could reach very high accuracies just by labeling almost every company as 
 healthy, but it would be predictively worthless. It gets the 96.77\% of healthy firms right while missing the very cases we care about, 
 the 3.23\% that actually go bankrupt. 
 
-The second problem is the redundancy that comes with this high dimensionality. Many of the 95 ratios are just algebraic transformations 
-or close relatives of one another. Return on Assets for example has ROA(A) before interest and after tax and ROA(B) before interest and 
-depreciation after tax, which differ only in the treatment of depreciation. Another is Cash Flow Per Share and Operating Profit Per Share. 
-Both obviously share the same denominator (shares outstanding) but also track operating performance, so their numerators move closely together too. As a result, distinct 
-columns carry very similar information. Both of these problems need to be understood and addressed in order to build an accurate and interpretable
+The second problem is the redundancy that comes with this high dimensionality. Many of the 95 features are just algebraic transformations 
+or close relatives of one another. \emph{Return on Assets} for example has ROA(A) before interest and after tax and ROA(B) before interest and 
+depreciation after tax, which differ only in the treatment of depreciation. Another is \emph{Operating Profit Per Share} and \emph{Operating profit/Paid-in capital}.
+Both put the same operating profit on top and divide it by closely related bases, shares outstanding in one case and the capital paid in for those shares
+in the other, so they move closely together too. As a result, distinct columns can carry very similar information. 
+Both of these problems need to be understood and addressed in order to build an accurate and interpretable
 model.
 
-% Other question like the integrity of the Dataset (why is it showing a point in time view of financial data and than
-% just showing if it went bankrupt or not what about the financial crisis in 2008 where is bias is this dataset even able to represent
-% bankruptcy as a whole) are raised here but left open, since they bear on interpretation
-% rather than on the predictive exercise itself. While we want to see and compare results this analysis focuses on building a clean reproducable
-% pipeline comparibility oriented approach on bankruptcy prediction, not to infer causal economic or financial insights from the data withput hypothesis
-% tesing and crosschecking scientific fundamental standards to a dataset.
+% redundancy vielleicht doch multicolinearity

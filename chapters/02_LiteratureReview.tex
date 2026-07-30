@@ -5,22 +5,22 @@ The quantitative prediction of corporate bankruptcy has moved through three
 overlapping phases, from classical statistical models over the adoption of
 machine learning to a growing concern with class imbalance and model
 interpretability. This chapter reviews the literature most relevant to 
-the present work and isolates the gap the thesis addresses.
+the present work and isolates the gap this thesis addresses.
 
-The study of bankruptcy prediction initially involved \textcite{altman1968}, who
-developed the Z-score by combining five financial ratios into a single
-discriminant function. \textcite{ohlson1980} later advanced the field by
-introducing logit models. Both of these methods are extensively discussed in the
+The study of bankruptcy prediction initially involved \textcite{beaver1966},
+who examined financial ratios one at a time to separate failing from healthy
+firms. \textcite{altman1968} then combined five ratios into a single
+discriminant function, the Z-score, and later \textcite{ohlson1980} advanced
+the field by introducing logit models. These methods are extensively discussed in the
 literature reviewed in this thesis and are therefore only briefly noted here.
 What matters for the present work is their common limitation. Although these
 models are transparent and have coefficients that can be easily understood in
 economic terms, they assume a fixed functional form and are thus incapable of
-dealing with potential non-linear interactions in firm-level data. The study by
+dealing with potential non-linear interactions in the data. The study by
 \textcite{liang2016} is representative of the shift towards machine learning and
-is also the origin of this dataset. It demonstrates that ensemble classifiers consistently
-outperform single linear models. At the same time, \textcite[562]{liang2016}
+is also the origin of this dataset. At the same time, \textcite[562]{liang2016}
 forced the two classes into an even balance by simple stratified sampling, a
-decision that has since been questioned by subsequent research and which this 
+decision that has since been questioned and is a design choice this 
 thesis also does not follow.
 
 Since bankruptcies are rare, the treatment of class imbalance has turned into a
@@ -31,18 +31,18 @@ There are two types of solutions and they differ according to the kind of data
 the model ends up learning. The oversampling methods, of which SMOTE
 \parencite{chawla2002} is the most commonly used, create additional synthetic
 observations for the minority class until the classes are balanced. In contrast,
-specfic undersampling methods reduce the number of cases in the majority class, so
+specific undersampling methods reduce the number of cases in the majority class, so
 that each observation on which the model is trained actually corresponds to a
 firm that really existed. This difference is the methodological commitment of
 the thesis. The closest study in this area is \textcite{wangliu2021}, in which
 they examine several undersampling methods on exactly the dataset used here,
 combined with repeated stratified cross-validation and the $F_2$-score as the
-primary metric. The best setup that they achieve, using the edited nearest
-neighbours approach with a Naive Bayes classifier, attains an $F_2$ score of
+primary metric. The best setup that they achieve, using edited nearest
+neighbours with a Naive Bayes classifier, attains an $F_2$ score of
 $0.423$ \parencite[12]{wangliu2021}. The sampling approach, the idea of
 leakage-aware validation and the choice of metric form the base that this thesis
 extends. Cluster-based undersampling in particular has already existing work
-outside of Wang and Liu, since \textcite[11]{ansahnarh2024} also keep the
+outside of \textcite{wangliu2021}, since \textcite[11]{ansahnarh2024} also keep the
 cluster centroids of the majority class on the same data, making use of the same
 Python implementation as is used here, even though it is part of a more complex
 overall setup.
@@ -71,14 +71,17 @@ ratios and \textcite{chaudhary2023} who applies a Pearson-correlation screen, or
 by transforming the features, as \textcite{ko2024} and \textcite{sinap2025} do
 by means of factor analysis and principal components. Even though these
 filtering methods are simple, they evaluate the features before and
-independently of the model, whereas the present thesis is concerned with finding
+independently of the model, whereas this thesis is concerned with finding
 out what the trained model in fact relies on. In this regard, post-hoc
 importance methods have been used, as \textcite{ansahnarh2024} report
 random-forest importances and \textcite{sinap2025} is the only one of the
 studies looked at here that makes use of SHAP, even though each of them provides
 only a single importance measure without checking whether other measures would
 be in agreement. Together, the framework being trained entirely on real firms
-through undersampling and the comparison of importance methods on this
-framework, make up the gap that this thesis aims to address. The technical
+through undersampling and the comparison of importance methods make up the gap that 
+this thesis aims to address. The technical
 background of these methods is given in
 Chapters~\ref{ch:methodology} and~\ref{ch:featureimportance}.
+
+
+% highlight more the contribution of the thesis

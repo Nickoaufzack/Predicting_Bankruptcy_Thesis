@@ -8,7 +8,7 @@ so in an anticipated pattern, each showing the strengths and weaknesses that
 were laid out throughout this thesis. The logistic regression is the simplest case. 
 Because the $\ell_1$ penalty
 already thinned most of the redundancy during training, all three methods agree
-on the Debt ratio. This clean picture, however, comes from the weakest of the
+on the \emph{Debt ratio}. This clean picture, however, comes from the weakest of the
 three models. Whether a linear model can represent the full complexity of the
 data remains open. The two ensembles predict better, but they receive the 
 redundancy intact, since all $95$ features were deliberately kept for the integrity of the data and for
@@ -16,7 +16,7 @@ comparability with \textcite{wangliu2021}. Here the methods drift apart in
 recognizable ways. The Gini ranking of the random forest carries three closely
 related earnings measures on places one, three and four, which fits its described
 tendency to split credit between near-identical features. Permutation drops
-Persistent EPS entirely in both ensembles although the other methods rank it
+\emph{Persistent EPS} entirely in both ensembles although the other methods rank it
 first or second, which fits its described tendency to hide features with close
 substitutes. SHAP, in turn, keeps the redundant families visible in every model,
 which fits its described tendency to share credit between them. The redundancy
@@ -28,19 +28,19 @@ the comparison. On its own each of these lists looks like the answer.
 Only the comparison shows that it is one of several, shaped by the model 
 and the method behind it.
 
-Read economically, and strictly as association rather than cause, the results
+Read economically and strictly as association rather than cause, the results
 still tell one consistent story. Every model places a leverage measure at or
-near the top, the Debt ratio for the logistic regression and Borrowing
-dependency for the ensembles, so firms financed largely through borrowed capital
+near the top, the \emph{Debt ratio} for the logistic regression and \emph{Borrowing
+dependency} for the ensembles, so firms financed largely through borrowed capital
 are the ones the models flag, which is also what one would expect economically.
 At the same time the single most important feature is model-dependent, as the
 random forest, nearly as strong as gradient boosting, ranks Persistent EPS first
 under SHAP. Among the studies reviewed here, \textcite{sinap2025} is the only
 other one applying SHAP to this dataset and reports Net Income to Total Assets,
-in substance a return-on-assets measure, as the top feature of a stacking
-classifier trained on SMOTE-balanced data and is followed by the Debt ratio. It is
+in substance a return on assets measure, as the top feature of a stacking
+classifier trained on SMOTE balanced data. The Debt ratio follows in second place. It is
 notable that this list resembles the ranking of the linear model more than
-those of the better-performing ensembles, where the Debt ratio sits far from
+those of the better performing ensembles, where the Debt ratio sits far from
 the top. Comparing these answers does not make one of them wrong. It shows that
 a ranking depends on the whole pipeline that produces it, which supports
 reading such lists with care.
@@ -50,7 +50,7 @@ side it achieves what it was chosen for. Every firm the models learned from
 actually existed and the reported scores are measured on untouched test folds
 with the natural $3.2\%$ bankruptcy rate, so they estimate the realistic case
 honestly. This separates the results from the $98$--$99\%$ accuracies reported in
-SMOTE-based studies, which train, and sometimes evaluate, on balanced data and
+SMOTE-based studies, which train and sometimes evaluate on balanced data and
 whose numbers therefore describe a different setting. The lower numbers here
 reflect a more realistic task rather than weaker models. On the critical side,
 undersampling discards information, as $5{,}939$ healthy firms enter each

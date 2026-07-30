@@ -11,7 +11,7 @@ itself, its financial statements. Ratios describing profitability, liquidity
 and debt condense a firm's condition into comparable numbers, which makes them
 a natural input for prediction models. Machine learning can pick up patterns in
 these ratios that classical methods miss, but it faces one structural problem.
-Bankruptcies are rare, and models trained on such imbalanced data tend to
+Bankruptcies are rare and models trained on such imbalanced data tend to
 overlook the very cases they are supposed to find. Much of the recent
 literature answers this by balancing the dataset through synthetic bankruptcy 
 cases and by relying on complex models whose decisions remain largely unexplained.
@@ -19,26 +19,25 @@ cases and by relying on complex models whose decisions remain largely unexplaine
 This thesis takes a different route on both points. Using a widely studied
 dataset of $6{,}819$ Taiwanese firms, of which only $3.2\%$ went bankrupt, it
 trains exclusively on real observations. The imbalance is handled by
-ClusterCentroids undersampling, which condenses the healthy majority into
+ClusterCentroids undersampling \parencite{islp2023}, which condenses the healthy majority into
 representative real firms instead of generating synthetic bankrupt ones. Three
 models of increasing complexity, a logistic regression, a random forest and
 gradient boosting, are compared under repeated stratified cross-validation and
-selected on the $F_2$-score, because missing a bankruptcy costs far more than a
-false alarm. The setup extends \textcite{wangliu2021}, who established this
+selected on the $F_2$-score. The setup extends \textcite{wangliu2021}, who established this
 sampling and evaluation framework on the same data but stopped at predictive
-performance. The goal is to build an approach that is based on but not necessarily 
-tied to this particular dataset and could therefore be transferred to any similarly 
-imbalanced prediction problem.
+performance. %and dont do feature importance
+ The goal is to build an approach that is based on but not necessarily 
+tied to this particular dataset and could therefore be transferred to any similar problem.
 
 An additional contribution builds on top of this framework and asks a second
 question, which financial features the fitted models rely on and how far the
-answer depends on how one asks. Three feature importance methods, native importance, 
-permutation importance and SHAP are applied to all three models. The short 
+answer depends on the way the question is asked. Three feature importance methods, native importance, 
+permutation importance and SHAP, are applied to all three models. The short 
 answer is that no single ranking exists, as the methods
 diverge in ways their known weaknesses predict, while a consistent signal
 remains, with every model placing a measure of debt dependence at or near the
 top. The insight therefore lies not in one definitive ranking but in the comparison
 itself, which shows how each answer is shaped by the model and the method
-behind it. Chapters~2 and~3 review the literature and the data, Chapters~4 and~5
-develop the methodology and the importance methods and Chapters~6 to~8 report,
-discuss and conclude.
+behind it. Chapters~\ref{ch:literature} and~\ref{ch:dataset} review the literature and the data, Chapters~\ref{ch:methodology} and~\ref{ch:featureimportance}
+develop the methodology and the importance methods and Chapters~\ref{ch:results} to~\ref{ch:conclusion} report,
+discuss and conclude. %maybe one sentence for each

@@ -31,6 +31,7 @@
   year         = {2021},
   volume       = {16},
   number       = {7},
+  pages        = {e0254030},
   doi          = {10.1371/journal.pone.0254030},
 }
 
@@ -52,6 +53,8 @@
   title        = {An investigation of bankruptcy prediction in imbalanced datasets},
   journaltitle = {Decision Support Systems},
   year         = {2018},
+  volume       = {112},
+  pages        = {111--124},
   doi          = {10.1016/j.dss.2018.06.011}, % from PDF
 }
 
@@ -61,7 +64,7 @@
   title        = {Enhancing corporate bankruptcy prediction via a hybrid genetic algorithm and domain adaptation learning architecture},
   journaltitle = {Expert Systems with Applications},
   year         = {2024},
-  volume       = {258},       % VERIFY
+  volume       = {258},
   pages        = {125133},    % article id
   doi          = {10.1016/j.eswa.2024.125133}, % from PDF
 }
@@ -71,8 +74,9 @@
   author       = {Amirshahi, Bahareh and Lahmiri, Salim},
   title        = {Bankruptcy prediction using optimal ensemble models under balanced and imbalanced data},
   journaltitle = {Expert Systems},
-  year         = {2024},      % VERIFY
-  volume       = {41},        % VERIFY
+  year         = {2024},
+  volume       = {41},
+  number       = {8},
   pages        = {e13599},    % article id
   doi          = {10.1111/exsy.13599}, % from PDF
 }
@@ -110,17 +114,19 @@
   volume       = {16},
   number       = {1},
   pages        = {97--113},
+  doi          = {10.24012/dumf.1597564}, % from PDF
 }
 
 % ---- "Black box" SMOTE benchmark to argue against -------------------
-@report{pham2025,
-  author       = {Pham, Hung and Chu, Tuan and Le, Tuan M. and Tran, Hieu M. and Tran, Huong T. K. and Yen, Khanh N. and Dao, Son V. T.},
+@article{pham2025,
+  author       = {Pham, Hung V. and Chu, Tuan and Le, Tuan M. and Tran, Hieu M. and Tran, Huong T. K. and Yen, Khanh N. and Dao, Son V. T.},
   title        = {Comprehensive Evaluation of Bankruptcy Prediction in {Taiwanese} Firms Using Multiple Machine Learning Models},
-  institution  = {RMIT University},
-  type         = {Research report},
+  journaltitle = {International Journal of Technology},
   year         = {2025},
-  url          = {https://hdl.handle.net/10779/rmit.28341914.v1},
-  urldate      = {2026-07-10},
+  volume       = {16},
+  number       = {1},
+  pages        = {289--309},
+  doi          = {10.14716/ijtech.v16i1.7227}, % from PDF
 }
 
 % ---- High-accuracy multi-granularity approach -----------------------
@@ -130,7 +136,6 @@
   booktitle    = {Proceedings of the IEEE International Conference on Advanced Communication Technology (ICACT)},
   year         = {2025},
   doi          = {10.1109/ICACT67549.2025.11351493}, % from PDF
-  note         = {VERIFY full author list and venue details},
 }
 
 % ---- "Pearson too simple" critique (Literature Review only) ---------
@@ -140,6 +145,8 @@
   type         = {MSc research project (FinTech)},
   institution  = {National College of Ireland},
   year         = {2023},
+  url          = {https://norma.ncirl.ie/7015/},
+  urldate      = {2026-07-30},
 }
 
 % =====================================================================
@@ -154,6 +161,7 @@
   year         = {2023},
   publisher    = {Springer},
   series       = {Springer Texts in Statistics},
+  doi          = {10.1007/978-3-031-38747-0},
 }
 
 % ---- Imbalanced-learning / sampling methods ------------------------
@@ -181,28 +189,6 @@
   doi          = {10.1145/1007730.1007735},
 }
 
-@article{tomek1976,
-  author       = {Tomek, Ivan},
-  title        = {An Experiment with the Nearest-Neighbor Rule},
-  journaltitle = {IEEE Transactions on Systems, Man, and Cybernetics},
-  year         = {1976},
-  volume       = {SMC-6},
-  number       = {6},
-  pages        = {448--452},
-  doi          = {10.1109/TSMC.1976.4309523},
-}
-
-@article{wilson1972,
-  author       = {Wilson, Dennis L.},
-  title        = {Asymptotic Properties of Nearest Neighbor Rules Using Edited Data},
-  journaltitle = {IEEE Transactions on Systems, Man, and Cybernetics},
-  year         = {1972},
-  volume       = {SMC-2},
-  number       = {3},
-  pages        = {408--421},
-  doi          = {10.1109/TSMC.1972.4309137},
-}
-
 % ---- SHAP: Shapley-value / additive attribution --------------------
 @inproceedings{lundberg2017,
   author       = {Lundberg, Scott M. and Lee, Su-In},
@@ -210,6 +196,8 @@
   booktitle    = {Advances in Neural Information Processing Systems 30 (NeurIPS 2017)},
   year         = {2017},
   pages        = {4765--4774},
+  url          = {https://arxiv.org/abs/1705.07874},
+  urldate      = {2026-07-30},
 }
 
 % ---- Gini-bias in random-forest importance -------------------------
@@ -288,7 +276,8 @@
   volume  = {23},
   number  = {4},
   pages   = {589--609},
-  year    = {1968}
+  year    = {1968},
+  doi     = {10.1111/j.1540-6261.1968.tb00843.x}
 }
 
 @article{ohlson1980,
@@ -298,5 +287,26 @@
   volume  = {18},
   number  = {1},
   pages   = {109--131},
-  year    = {1980}
+  year    = {1980},
+  doi     = {10.2307/2490395}
+}
+
+@article{beaver1966,
+  author  = {Beaver, William H.},
+  title   = {Financial Ratios as Predictors of Failure},
+  journal = {Journal of Accounting Research},
+  volume  = {4},
+  pages   = {71--111},
+  year    = {1966},
+  doi     = {10.2307/2490171}
+}
+
+@online{uci_polish,
+  author       = {Zi{\k{e}}ba, Maciej and Tomczak, Sebastian K. and Tomczak, Jakub M.},
+  title        = {Polish Companies Bankruptcy Data},
+  type         = {Dataset},
+  year         = {2016},
+  doi          = {10.24432/C5F600},
+  url          = {https://archive.ics.uci.edu/dataset/365/polish+companies+bankruptcy+data},
+  urldate      = {2026-07-30},
 }

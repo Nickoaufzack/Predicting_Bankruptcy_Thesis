@@ -54,8 +54,8 @@ $93$ continuous ratios, that bias applies here directly.
 Redundancy adds a second one. When two ratios are near-identical, a split can use
 only one of them at a time, meaning across the forest the credit is shared between the
 twins. The importance of what they jointly carry is split in two and each ends up
-looking less important than the pair really is. Neither distortion shows up in the
-ranking on its own, which is why the Gini importance is not read in isolation.
+looking less important than the pair really is. Neither distortion is visible in 
+the ranking itself, which is why the Gini importance is not read in isolation.
 
 \section{Permutation Importance}
 \label{sec:fi-permutation}
@@ -70,7 +70,7 @@ is recorded.
 A feature the model genuinely relies on causes a large drop when shuffled, while a
 feature it hardly uses would not move the score as much. Averaging this over ten repetitions then
 makes sure this does not come down to a single lucky or unlucky shuffle,
-following the same logic as cross-validation. And because the measure is defined
+following the same logic as cross-validation. Because the measure is defined
 purely through the loss of the same $F_2$ the models were selected on, it applies
 agnostically to all three and gives a common anchor for comparing them.
 
@@ -79,9 +79,8 @@ twin, shuffling one of them tends to change little, because the twin still holds
 same information. Even a feature the model relies on can then look
 unimportant. This is the counterpart to the impurity case where redundancy splits
 the credit between twins, here it hides it. It is not a flaw in the method but 
-rather a property of permutation under dependence and the reason why the three 
-methods are compared against eachother in
-Chapter~\ref{ch:results}.
+rather a property of permutation under dependence and another reason why the three 
+methods are compared against each other in Chapter~\ref{ch:results}.
 
 \section{SHAP}
 \label{sec:fi-shap}
@@ -92,7 +91,7 @@ guarantees \parencite{lundberg2017}. The idea is to rebuild a single prediction 
 simple, additive pieces with a starting value plus one contribution for each feature.
 \textcite{lundberg2017} write this as
 \begin{equation}
-  g(z') = \phi_0 + \sum_{i=1}^{95} \phi_i z_i',
+  g(z') = \phi_0 + \sum_{i=1}^{95} \phi_i z_i'.
   \label{eq:shap-additive}
 \end{equation}
 
@@ -100,14 +99,14 @@ Here $g(z')$ is an explanation model, a replica that rebuilds the model's true
 prediction by adding different pieces together. The first is the base value $\phi_0$,
 an average prediction across all firms, before the model knows anything about the
 specific firm. The others are contributions $\phi_i$ of the individual features,
-added on top of that base. Each $\phi_i$ is the so-called Shapley value of feature $i$, through which we can see
+added on top of that base. Each $\phi_i$ is the so-called \emph{Shapley Value} of feature $i$, through which we can see
 just how important each feature is by its actual numeric contribution to the model's
 prediction. Under the axioms behind SHAP these pieces return the true
 prediction of the model exactly, which is the additive guarantee the method is named
 for. The switch $z_i' \in \{0,1\}$ only states whether
 feature $i$ is included ($1$) or left out ($0$).
 
-The question is then how to find each contribution $\phi_i$, the Shapley value of
+The question is then how to find each contribution $\phi_i$, the Shapley Value of
 feature $i$. It comes from cooperative game theory as the fair way to divide the
 ``payoff'' of a prediction among the features, treating them as players that
 cooperate. A feature's contribution is how much it changes the prediction when it
@@ -143,11 +142,11 @@ The way around this is to use the structure of each model to reach the same valu
 without ever calculating those $2^{94}$ groups. Both come from the \texttt{shap}
 library \parencite{lundberg2017}. For the logistic regression, 
 \texttt{LinearExplainer}\footnote{\url{https://shap.readthedocs.io/en/latest/generated/shap.LinearExplainer.html}}
-reads the Shapley values directly from the coefficients. For the two tree ensembles,
+reads the Shapley Values directly from the coefficients. For the two tree ensembles,
 \texttt{TreeExplainer}\footnote{\url{https://shap.readthedocs.io/en/latest/generated/shap.TreeExplainer.html}} 
 walks through the trees and recovers the exact values in a
 tiny fraction of the time. In both cases the values are computed for the 
-bankruptcy class across all firms and are exact Shapley values rather than 
+bankruptcy class across all firms and are exact Shapley Values rather than 
 approximations.
 
 Two properties make SHAP the interpretive center of this thesis. First, it returns
@@ -161,5 +160,5 @@ contribution between them, so a redundant pair is spread across two smaller entr
 But unlike impurity, which splits the credit arbitrarily, or permutation, which
 hides it, SHAP keeps both the total and the sign, so the pair stays readable. This is
 why SHAP gives the most complete reading, but is still compared against the other
-two rather than trusted alone in the following Chapter. It is the pattern across 
+two rather than trusted alone in the following chapter. It is the pattern across 
 them, not any single method, that carries the insight.
