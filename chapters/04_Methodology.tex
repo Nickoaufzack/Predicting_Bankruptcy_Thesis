@@ -127,7 +127,7 @@ is captured by the bias--variance trade-off
 assumptions are too "simple" to capture the true relationship, variance describes 
 how much its predictions change when it is trained on a different sample. 
 Adding complexity lowers bias but raises variance. Logistic
-regression sits at the beginning: a linear, low-variance baseline whose simplicity
+regression sits at the beginning, a linear, low-variance baseline whose simplicity
 is also its main limitation. The two tree ensembles are more flexible and reduce
 the error from opposite sides. The Random Forest mainly by trying to lower variance,
 gradient boosting mainly by lowering bias. This is why all three are included
@@ -146,11 +146,11 @@ and the resulting scale is in log-odds rather then probabilities
 
 For this thesis the more relevant part is regularisation, because it
 is what adapts the model to a dataset of $95$ partly redundant ratios. Left
-unregularised, correlated features let the coefficients grow large and unstable,
+unregularised, correlated features let the coefficients grow large and unstable
 and every ratio keeps a non-zero weight, which harms both stability and
 readability. Regularisation counters this by adding a penalty on the size of the
 coefficients to the fitting objective. Through our pipeline the $\ell_1$
-(Lasso) penalty \parencite{tibshirani1996} is selected, which estimates the 
+\emph{Lasso} penalty \parencite{tibshirani1996} is selected, which estimates the 
 coefficients as
 \begin{equation}
   \hat{\boldsymbol{\beta}}
@@ -163,45 +163,45 @@ where $\hat{\boldsymbol{\beta}}$ is the set of coefficients that makes this
 expression smallest, $\ell(\boldsymbol{\beta})$ is the log-likelihood, which enters with
 a minus sign because minimising its negative is the same as maximising it and
 $\lambda$ sets the strength of the penalty placed on the sum over the features,
-which \texttt{scikit-learn} parametrises through $C = 1/\lambda$. What
-differentiates the LASSO from Ridge is that we take the absolute value of the
-coefficients rather than the squared value, which gives the model the ability to
-drive some coefficients exactly to zero and therefore perform an implicit feature
-selection: from a group of strongly correlated ratios it tends to keep one
-representative and discard the rest, which both tames the multicollinearity
-discussed in Chapter~\ref{ch:dataset} and yields a sparser, more readable model.
+which \texttt{scikit-learn} parametrises through $C = 1/\lambda$. What 
+differentiates the Lasso from Ridge is that we take the absolute value of
+the coefficients rather than the squared value, which gives the model the
+ability to drive some coefficients exactly to zero. Within a group of strongly
+correlated ratios it therefore tends to concentrate the weight on few
+representatives and shrink the rest, in the extreme to exactly zero, which
+eases the redundancy discussed in Chapter~\ref{ch:dataset} and yields a
+sparser, more readable model. Unlike the upfront screens of
+Chapter~\ref{ch:literature}, this happens inside the model during training, so
+no feature is discarded before the model has seen the data.
 
 This makes logistic regression the interpretable anchor of the comparison. Every
 surviving coefficient carries a sign, so the model states not only which ratios
 matter but in which direction they push a firm towards or away from bankruptcy. 
-The price for this transparency is rigidity. Being linear, it cannot represent the threshold effects and
-interactions between ratios that the tree ensembles exploit, which is why it takes
-the role of the low-variance, higher-bias baseline of the comparison. That
-same signed, transparent structure is what will later make the three importance
-methods in Chapter~\ref{ch:featureimportance} agree most cleanly for this model.
-
+The price for this transparency is rigidity. Being linear, it may not represent the threshold effects and
+interactions between ratios that the tree ensembles can exploit, which is why it takes
+the role of the low-variance, higher-bias baseline of the comparison.
 
 \subsection{Random Forest}
 \label{sec:rf}
 
 The random forest removes the linear restriction of the previous model by building
 on decision trees. A decision tree splits the data step by step at thresholds on single
-ratios like ``Debt ratio $> x$'' for example and can in this way capture the
+ratios like ``Debt ratio $> x$'' for example and can in this way capture
 interactions between ratios that a linear model cannot. A
 single decision tree is low in bias but high in variance, meaning it learns a
 particular training sample very closely and is therefore unstable. This is why we utilise
 the random forest \parencite{breiman2001}. It grows many trees, each on its own bootstrap
-sample drawn with replacement from the training firms and lets them vote.
+sample drawn with replacement from the training firms.
 Averaging over many trees cancels much of the variance of any individual tree. In addition,
 what gives the classifier its name, at each split, only a random subset of the features is
 considered, which decorrelates the trees so that the averaging actually pays off. On $95$ partly
 redundant ratios this decorrelation is what keeps the forest from building a
-set of almost identical trees and the size of that subset (\texttt{max\_features})
+set of almost identical trees and the size of that subset, \texttt{max\_features},
 is correspondingly one of its main tuning parameters \parencite{probst2019}.
 
 What holds the construction together is the rule by which each split is chosen. At
 every node the tree tries out possible thresholds and keeps the one that leaves the
-two resulting groups as pure as it can, meaning as close as possible to containing
+two resulting groups as pure as it can, in our case containing as close as possible
 only healthy or only bankrupt firms. How mixed a group still is gets measured by the
 Gini index, which for a node $t$ with class proportions $p_k$ is
 \begin{equation}
@@ -218,7 +218,7 @@ direction. That leaves the interpretation open and is one reason
 for the comparison in Chapter~\ref{ch:featureimportance}. %letzten zwei sätze raus?
 
 In bias--variance terms this places the random forest on the other side of the
-logistic regression. Where the linear baseline was stable but seemingly too simple to capture
+logistic regression. Where the linear baseline is stable but seemingly too simple to capture
 the true relationship, the deep trees of the forest are flexible enough to have low
 bias and the bootstrapping and decorrelation try to tackle the instability. 
 The forest therefore lowers variance while keeping bias low.
@@ -230,7 +230,7 @@ Gradient boosting uses the same building block of decision trees as the random f
 but combines them in a different way. Where the random forest grows many
 deep trees independently and averages them to cut variance, gradient boosting grows
 flat trees sequentially, each one correcting the errors of its predecessors 
-and in this way targets bias \parencite{friedman2001}. The two therefore
+and in this way targets bias instead of variance \parencite{friedman2001}. The two therefore
 attack the error from opposite sides, which is why both are included
 alongside the linear baseline.
 
@@ -321,7 +321,7 @@ estimate of performance on unseen firms rather than an artefact of the resamplin
 
 The same loop also selects each model's hyperparameters through a nested grid search
 inside the cross-validation. Every candidate configuration is put through the full
-evaluation and scored by its fold-averaged $F_2$, which will be show in Chapter \ref{ch:results}. Finally, the whole ten-fold split is repeated three times, each time with
+evaluation and scored by its fold-averaged $F_2$, which will be shown in Chapter \ref{ch:results}. Finally, the whole ten-fold split is repeated three times, each time with
 a different randomization of the firms, which gives $30$ independent train/test
 evaluations per model. The mean and standard deviation reported therefore no longer depend on any single split of the data.
 
@@ -377,7 +377,7 @@ formalise through the expected cost of misclassification and that
 \textcite[15]{ansahnarh2024} make directly when they note that missing a truly
 bankrupt company calls for models with high recall. \textcite[8]{wangliu2021} set
 $\beta = 2$ on this very dataset for the same reason, ``to minimize false
-negatives'', which in addition preserves comparability with the Framework benchmark this
+negatives'', which in addition preserves comparability with the Framework this
 thesis extends.
 
 The ROC-AUC is reported as a secondary figure but was never used for model

@@ -3,7 +3,7 @@
 
 This chapter reports the results in two parts. Section~\ref{sec:res-performance}
 presents the predictive performance of the three models and
-Section~\ref{sec:res-fi} presents the feature-importance rankings, whose systematic
+Section~\ref{sec:res-fi} presents the feature importance results, whose systematic
 divergence is the central finding. Everything here describes what the models rely on
 to predict, read as associative rather than causal, with the interpretation left to
 Chapter~\ref{ch:discussion}.
@@ -18,7 +18,7 @@ linear baseline. Gradient Boosting reaches the highest $F_2$ at $0.550$, the Ran
 Forest follows closely at $0.546$ and the Logistic Regression at $0.482$.
 This matches the model logic of Section~\ref{sec:models}. The ensembles can
 split on combinations of ratios that a linear model cannot capture and the results
-indicate, that the separation between healthy and bankrupt firms is not purely linear. They
+indicate that the separation between healthy and bankrupt firms is not purely linear. They
 gain that edge through recall, both catching roughly $74\%$ of bankruptcies against
 the Logistic Regression's $55\%$, which is exactly what the $F_2$-score rewards.
 Precision is modest for all three, but the $F_2$ objective
@@ -88,7 +88,7 @@ $0.05$ to reduce bias gradually over many small steps rather than a few large on
 \label{sec:res-fi}
 
 The importance results are where the analysis becomes most informative. Applying the
-three methods of Chapter~\ref{ch:featureimportance} to the three models of Chapter 4.3 does not
+three methods of Chapter~\ref{ch:featureimportance} to the three models of Section~\ref{sec:models} does not
 produce one ranking but a systematic divergence. Table~\ref{tab:divergence} shows this
 by giving, for each model, its single most important feature under each method.
 The pattern is read most clearly one model at a time, starting from the simple 
@@ -128,12 +128,14 @@ linear model to the two more complex ensembles, where they begin to disagree.
 The logistic regression is the control case with all three methods ranking the
 \emph{Debt ratio} first. Its native coefficient is the largest in magnitude and
 positive at $+14.49$, it takes the top permutation drop at $0.248$ and it leads the
-SHAP ranking at $0.625$. This agreement is not a coincidence. Because the $\ell_1$
-penalty had already thinned the redundant twins in each correlated group, little
-near-identical partner information is left for the methods to disagree over, so they
-largely read the same signal. It is the clearest evidence that the divergence in the
-ensembles below comes from the redundancy and not from the methods being unreliable in
-general. The direction also makes economic sense. The positive sign means that higher
+SHAP ranking at $0.625$. This agreement is not a coincidence. Because the $\ell_1$ 
+penalty had already thinned the redundant twins in each
+correlated group, far less near-identical partner information is left for the
+methods to disagree over than in the ensembles, so all three methods largely read the same signal.
+The agreement likely also owes something to the linear structure itself, either
+way it shows that the three methods can agree under simple conditions, so the
+divergence in the ensembles below marks a real difference rather than a
+weakness of the methods. The direction also makes economic sense. The positive sign means that higher
 leverage raises the predicted probability of bankruptcy. Figures~\ref{fig:perm-lr} and \ref{fig:shap-lr} show the permutation and SHAP
 rankings, with the \emph{Debt ratio} standing clearly above the rest in both. That
 the ROA variants still appear indicates that the penalty thinned the redundant group
@@ -224,7 +226,7 @@ $0.024$, more than ten times the next entry, with Net Value Per Share (C) alread
 down at $0.002$ and every other feature below that (Figure~\ref{fig:perm-gb}).
 Several of these small entries carry standard deviations larger than their means, 
 so their drops cannot be separated from zero. A ranking this concentrated 
-invites skepticism, but it is not enirely unique to permutation.
+invites skepticism, but it is not entirely unique to permutation.
 Gini importance distributes a total of one across all features, so it shows how a
 model spreads its reliance. In gradient boosting the top feature alone carries a
 quarter of that total ($0.247$), while in the forest no feature carries more than a

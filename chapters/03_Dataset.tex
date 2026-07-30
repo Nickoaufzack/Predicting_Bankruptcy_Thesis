@@ -31,7 +31,7 @@ of all observations. A naive classifier trained on the full data could reach ver
 healthy, but it would be predictively worthless. It gets the 96.77\% of healthy firms right while missing the very cases we care about, 
 the 3.23\% that actually go bankrupt. 
 
-The second problem is the multicollinearity that comes with this high dimensionality. Many of the 95 ratios are just algebraic transformations 
+The second problem is the redundancy that comes with this high dimensionality. Many of the 95 ratios are just algebraic transformations 
 or close relatives of one another. Return on Assets for example has ROA(A) before interest and after tax and ROA(B) before interest and 
 depreciation after tax, which differ only in the treatment of depreciation. Another is Cash Flow Per Share and Operating Profit Per Share. 
 Both obviously share the same denominator (shares outstanding) but also track operating performance, so their numerators move closely together too. As a result, distinct 

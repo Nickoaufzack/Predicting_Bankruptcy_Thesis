@@ -31,7 +31,7 @@ There are two types of solutions and they differ according to the kind of data
 the model ends up learning. The oversampling methods, of which SMOTE
 \parencite{chawla2002} is the most commonly used, create additional synthetic
 observations for the minority class until the classes are balanced. In contrast,
-the undersampling methods reduce the number of cases in the majority class, so
+specfic undersampling methods reduce the number of cases in the majority class, so
 that each observation on which the model is trained actually corresponds to a
 firm that really existed. This difference is the methodological commitment of
 the thesis. The closest study in this area is \textcite{wangliu2021}, in which
@@ -54,11 +54,14 @@ across both balanced and imbalanced settings. \textcite[305]{pham2025}, who also
 provide a general overview of sampling strategies, achieve accuracies close to
 $98.6\%$ using SMOTE and an artificial neural network, while \textcite{suresh2025}
 and \textcite{sinap2025} report similar results with similar approaches.
-Nevertheless, these figures are based on balanced data and so refer to a
-different scenario from the natural $96.8/3.2$ split, a situation in which
-accuracy on its own is not very informative. This thesis takes these studies as
-points of differentiation rather than as templates and accepts the lower
-reported numbers in exchange for training only on real firms.
+Nevertheless, high accuracy under these setups has to be read with care. 
+Some studies balance the data before splitting it, so the models are partly 
+evaluated on synthetic firms, but even when the test set instead keeps the 
+natural $96.8/3.2$ class distribution, accuracy alone is misleading because a 
+model that predicts every firm as non-bankrupt already achieves $96.8\%$ accuracy.
+This thesis takes these studies as points of differentiation rather than as 
+templates and accepts the lower reported numbers in exchange for training only 
+on real firms.
 
 The final aspect of the issue relates to the features, the financial ratios,
 which are responsible for the predictions. Some studies address this by carrying
@@ -76,6 +79,6 @@ studies looked at here that makes use of SHAP, even though each of them provides
 only a single importance measure without checking whether other measures would
 be in agreement. Together, the framework being trained entirely on real firms
 through undersampling and the comparison of importance methods on this
-framework make up the gap that this thesis aims to address. The technical
-background of these methods is given when they are discussed in
+framework, make up the gap that this thesis aims to address. The technical
+background of these methods is given in
 Chapters~\ref{ch:methodology} and~\ref{ch:featureimportance}.
